@@ -1,0 +1,29 @@
+% Requires \usepackage{booktabs}. Insert with \input{comparison_table.tex}.
+% Paired bootstrap: alpha=0.05, correction=fdr_by.
+% Correction covers all selected pairs and catchments in this run.
+% Percentages use all catchments in each comparison.
+% Unresolved = no significant winner + insufficient bootstrap replicates.
+% Delta NSE = median catchment difference (first model - second model), over tested catchments.
+% No detected difference does not establish equivalence.
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Comparison & First wins & Second wins & \shortstack{Unresolved\\catchments} & $\Delta$NSE \\
+\midrule
+\multicolumn{5}{l}{PUB} \\
+PUB-0 vs PUB-1 & 32 (6.0\%) & 113 (21.3\%) & 386 (72.7\%) & -0.0207 \\
+PUB-1 vs PUB-2 & 29 (5.5\%) & 85 (16.0\%) & 417 (78.5\%) & -0.0086 \\
+PUB-0 vs PUB-A & 28 (5.3\%) & 129 (24.3\%) & 374 (70.4\%) & -0.0314 \\
+PUB-1 vs PUB-A & 48 (9.0\%) & 87 (16.4\%) & 396 (74.6\%) & -0.0112 \\
+PUB-2 vs PUB-A & 55 (10.4\%) & 59 (11.1\%) & 417 (78.5\%) & -0.0020 \\
+\midrule
+\multicolumn{5}{l}{GLOBAL} \\
+GLOBAL-0 vs GLOBAL-1 & 0 (0.0\%) & 161 (30.3\%) & 370 (69.7\%) & -0.0444 \\
+GLOBAL-1 vs GLOBAL-2 & 1 (0.2\%) & 87 (16.4\%) & 443 (83.4\%) & -0.0150 \\
+GLOBAL-2 vs GLOBAL-4 & 4 (0.8\%) & 16 (3.0\%) & 511 (96.2\%) & -0.0027 \\
+GLOBAL-4 vs GLOBAL-26 & 7 (1.3\%) & 19 (3.6\%) & 505 (95.1\%) & -0.0014 \\
+GLOBAL-0 vs GLOBAL-A & 0 (0.0\%) & 220 (41.4\%) & 311 (58.6\%) & -0.0774 \\
+GLOBAL-1 vs GLOBAL-A & 2 (0.4\%) & 104 (19.6\%) & 425 (80.0\%) & -0.0259 \\
+GLOBAL-2 vs GLOBAL-A & 8 (1.5\%) & 41 (7.7\%) & 482 (90.8\%) & -0.0079 \\
+GLOBAL-4 vs GLOBAL-A & 11 (2.1\%) & 29 (5.5\%) & 491 (92.5\%) & -0.0053 \\
+\bottomrule
+\end{tabular}

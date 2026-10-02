@@ -1,0 +1,11 @@
+# Main environment for training, evaluation, analysis and figures (all except Fig. 2).
+#   conda env create -f environment.yml
+#   conda activate ea-encoder-lstm
+name: ea-encoder-lstm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - pip
+  - pip:
+      - -r requirements.txt

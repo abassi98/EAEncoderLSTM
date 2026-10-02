@@ -1,0 +1,25 @@
+# Main environment: training, evaluation, analysis and all figures.
+# Versions are the ones used to regenerate the paper figures.
+numpy==2.4.6
+pandas==3.0.1
+scipy==1.17.1
+matplotlib==3.10.9
+seaborn==0.13.2
+scikit-learn==1.8.0
+# torch<=2.6: the custom MultiStepLR in src/utils.py passes `verbose`, removed in torch 2.7.
+torch==2.6.0
+pytorch-lightning==2.6.5
+h5py==3.16.0
+numba==0.65.1
+tqdm==4.67.3
+xarray==2026.2.0
+wandb==0.27.0
+optuna==5.0.0
+geopandas==1.1.3
+shapely==2.1.2
+pyogrio==0.12.1
+pyproj==3.7.2
+python-dateutil==2.9.0.post0
+pillow==12.2.0
+cmcrameri==1.10
+contextily==1.7.1

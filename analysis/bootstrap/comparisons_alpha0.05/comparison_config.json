@@ -1,0 +1,378 @@
+{
+  "models": {
+    "PUB-0": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_pub_ae_0_test_sliding365.pkl",
+      "file_sha256": "5c5bc3dab585e81d5d2d025e5b8d58c6ad87c0565202818c35e4a4feba148617",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "pub",
+      "encoded_features": 0
+    },
+    "PUB-1": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_pub_ae_1_test_sliding365.pkl",
+      "file_sha256": "782ac646579ece5d5b28346571005911d2692b599a61048003f0874387e817bd",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "pub",
+      "encoded_features": 1
+    },
+    "PUB-2": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_pub_ae_2_test_sliding365.pkl",
+      "file_sha256": "2bd1f9f7c54186187eac5b4a247b3c3441d71e49adf4e4e8048bb9d44b4d9780",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "pub",
+      "encoded_features": 2
+    },
+    "PUB-A": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_pub_ae_None_test_sliding365.pkl",
+      "file_sha256": "1f806da7dd87c095fe2f667ad08e4992b1522fcebb9bc7f2c0599e2df676f794",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "pub",
+      "encoded_features": null
+    },
+    "GLOBAL-0": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_0_test_sliding365.pkl",
+      "file_sha256": "223ceda6129b308d2b1e639824ccfbce0f2573acc571de87ace2ed7fd75aec16",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": 0
+    },
+    "GLOBAL-1": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_1_test_sliding365.pkl",
+      "file_sha256": "349ffce73e5b30f5e1af1294ceef23103c901b64fa3fa26d24210a176be1f7ee",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": 1
+    },
+    "GLOBAL-2": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_2_test_sliding365.pkl",
+      "file_sha256": "4d50f15907339e3104009a6ea57bf98133dccda719a971aee070d06a09274b64",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": 2
+    },
+    "GLOBAL-4": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_4_test_sliding365.pkl",
+      "file_sha256": "f10aa425df39f28222587b4be4998bdede5d00f3aa91958fef87f3c0f2c9ad06",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": 4
+    },
+    "GLOBAL-26": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_26_test_sliding365.pkl",
+      "file_sha256": "65c8d27e32f5d313d348cb3b48d164ea4c0656afd187f2cca6a6d33a42ae85f8",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": 26
+    },
+    "GLOBAL-A": {
+      "file": "/cfs/earth/scratch/xbs4/Attention4Hydro/analysis/bootstrap/nse_global_ae_None_test_sliding365.pkl",
+      "file_sha256": "dc2e7d3a39731481a237456a7ebf1a40e4b5a6c1d4265f0857dfb7dc01e20ca5",
+      "bootstrap_metadata": {
+        "method": "sliding_365_days",
+        "samples_file": "analysis/bootstrap/sliding365_samples_test_seed0_n5000.pkl",
+        "samples_sha256": "d65fb3a6a5f813064fec494fafdfd6328710f7d001d764cf6380d320168cb94f",
+        "seed": 0,
+        "n_bootstrap": 5000,
+        "start_date": "1989-10-01",
+        "end_date": "1999-09-30",
+        "block_length": 365,
+        "block_lengths": [
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          365,
+          2
+        ]
+      },
+      "family": "global",
+      "encoded_features": null
+    }
+  },
+  "reference": null,
+  "eval_period": "test",
+  "selection": "analysis.utils.get_bootstrap_plot_models",
+  "pairs": "paper",
+  "selected_pairs": [
+    [
+      "PUB-0",
+      "PUB-1"
+    ],
+    [
+      "PUB-1",
+      "PUB-2"
+    ],
+    [
+      "PUB-0",
+      "PUB-A"
+    ],
+    [
+      "PUB-1",
+      "PUB-A"
+    ],
+    [
+      "PUB-2",
+      "PUB-A"
+    ],
+    [
+      "GLOBAL-0",
+      "GLOBAL-1"
+    ],
+    [
+      "GLOBAL-1",
+      "GLOBAL-2"
+    ],
+    [
+      "GLOBAL-2",
+      "GLOBAL-4"
+    ],
+    [
+      "GLOBAL-4",
+      "GLOBAL-26"
+    ],
+    [
+      "GLOBAL-0",
+      "GLOBAL-A"
+    ],
+    [
+      "GLOBAL-1",
+      "GLOBAL-A"
+    ],
+    [
+      "GLOBAL-2",
+      "GLOBAL-A"
+    ],
+    [
+      "GLOBAL-4",
+      "GLOBAL-A"
+    ]
+  ],
+  "skipped_pairs": [],
+  "skipped_models": [],
+  "alpha": 0.05,
+  "correction": "fdr_by",
+  "correction_family": "all selected pairs across families; common catchments within each family",
+  "n_comparisons": 6903,
+  "n_tested": 6903,
+  "min_valid_replicates": 1000,
+  "min_valid_fraction": 0.95,
+  "excluded_catchments": {
+    "PUB-0": [],
+    "PUB-1": [],
+    "PUB-2": [],
+    "PUB-A": [],
+    "GLOBAL-0": [],
+    "GLOBAL-1": [],
+    "GLOBAL-2": [],
+    "GLOBAL-4": [],
+    "GLOBAL-26": [],
+    "GLOBAL-A": []
+  },
+  "delta_definition": "NSE(model_a) - NSE(model_b), replicate by replicate",
+  "confidence_interval": "unadjusted equal-tailed percentile interval",
+  "test": "approximate percentile-CI inversion with inclusive tails and +1 safeguard",
+  "p_value_formula": "min(1, 2 * (min(count(delta <= 0), count(delta >= 0)) + 1) / (n_valid + 1))",
+  "interpretation": "not_significant does not establish equivalence; bootstrap win fractions are not posterior probabilities"
+}
