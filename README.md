@@ -65,9 +65,9 @@ Static attributes are already in `data/attributes.db`. The PUB fold files are in
 
 **Periods.** Training covers 1999-10-01 to 2008-09-30, validation 1981-10-01 to 1989-09-30, and test 1989-10-01 to 1999-09-30. Hyper-parameters are in `GLOBAL_SETTINGS` in `main.py`. The encoder has 4 layers of 300 units. The linear encoder of Appendix C uses `'hidd_layers': []`.
 
-**Logging.** Training logs to Weights & Biases. The training scripts call `wandb online`; change it to `wandb offline` if you don't have an account. Each training job writes its stdout to `reports/`, and the post-processing scripts read the `run_dir:` line from these logs, so create the folder first with `mkdir -p reports`. The job scripts locate run directories by splitting the logged path on `Attention4Hydro/`, so clone the repository into a folder with that name.
+**Logging.** Each training job writes its stdout to `reports/`, and the post-processing scripts read the `run_dir:` line from these logs, so create the folder first with `mkdir -p reports`. The job scripts locate run directories by splitting the logged path on `Attention4Hydro/`, so clone the repository into a folder with that name.
 
-**Pipeline.** The job scripts contain SLURM headers and cluster-specific `module load` and `conda activate` lines. Adapt those lines to your machine, then run them with `sbatch` or `bash`. Each model is an ensemble of four random restarts (runs 0-3). `N` is the latent dimension, or `None` for the `-A` models.
+**Pipeline.** Run bash script them with `bash`. Each model is an ensemble of four random restarts (runs 0-3). `N` is the latent dimension, or `None` for the `-A` models.
 
 ```sh
 # 1. Train: GLOBAL (4 runs) and PUB (4 runs x 12 folds; run r uses data/kfold_splits_seed{300+r}.p)
@@ -116,7 +116,7 @@ All commands run from the repository root, using the intermediate results in `an
 | D1-D4 | `python -m scripts.plot_bootstrap_significance --comparison-dir analysis/bootstrap/comparisons_alpha0.05` |
 
 The models shown in Figs. 3, 4, C1 and C2, and their colours, are set by `cmodels` in `src/plot_utils.py`.
-
+<!-- 
 ## Citation
 
 If you use this code, please cite:
@@ -131,7 +131,7 @@ If you use this code, please cite:
   pages   = {PPPP},
   doi     = {10.XXXX/XXXXX},
 }
-```
+``` -->
 
 ## License
 
