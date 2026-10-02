@@ -67,7 +67,7 @@ Static attributes are already in `data/attributes.db`. The PUB fold files are in
 
 **Logging.** Each training job writes its stdout to `reports/`, and the post-processing scripts read the `run_dir:` line from these logs, so create the folder first with `mkdir -p reports`. The job scripts locate run directories by splitting the logged path on `Attention4Hydro/`, so clone the repository into a folder with that name.
 
-**Pipeline.** Run bash script them with `bash`. Each model is an ensemble of four random restarts (runs 0-3). `N` is the latent dimension, or `None` for the `-A` models.
+**Pipeline.** Run bash script with `bash`. Each model is an ensemble of four random restarts (runs 0-3). `N` is the latent dimension, or `None` for the `-A` models.
 
 ```sh
 # 1. Train: GLOBAL (4 runs) and PUB (4 runs x 12 folds; run r uses data/kfold_splits_seed{300+r}.p)
