@@ -1,4 +1,5 @@
 # How Much Catchment Information Does an LSTM Use for Streamflow Prediction?
+[![DOI](https://zenodo.org/badge/1397413521.svg)](https://doi.org/10.5281/zenodo.23101869)
 
 Code and intermediate results for the manuscript by Alberto Bassi, Fabrizio Fenicia, Antonietta Mira and Carlo Albert (submitted to *Water Resources Research*).
 
