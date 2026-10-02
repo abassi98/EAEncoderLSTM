@@ -1,13 +1,3 @@
-"""Compute full and leave-one-run-out ensemble performance (no bootstrapping).
-
-Example: python -m scripts.compute_leave_one_out global 2 test nse
-
-Save one row per basin, with ``full`` and ``without_<seed>`` metric columns.
-For a cumulative sensitivity envelope, construct a curve for EACH column, then
-take their pointwise minimum and maximum, including the full-ensemble curve.
-These are ensemble-membership sensitivity bounds, not confidence intervals.
-This module also provides the shared CSV loader for the plotting scripts.
-"""
 
 import argparse
 import pickle

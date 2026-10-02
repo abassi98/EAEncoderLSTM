@@ -1,4 +1,3 @@
-"""Plot bootstrap distributions or full + leave-one-run-out sensitivity bands."""
 
 import argparse
 import warnings

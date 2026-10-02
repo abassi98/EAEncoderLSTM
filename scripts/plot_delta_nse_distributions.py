@@ -1,4 +1,3 @@
-"""Compare successive-model delta-NSE distributions for global and pub runs."""
 
 import argparse
 from pathlib import Path

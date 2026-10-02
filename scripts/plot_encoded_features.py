@@ -1,5 +1,4 @@
 import argparse
-import pickle
 from pathlib import Path
 
 import matplotlib as mpl

@@ -144,16 +144,17 @@ cmodels = {
         1: "#b5eacc",
         2: "#8ed9d1",
         #3: "#67c7d5",
-        #4: "#54b2cc",
-        26: "#3292c2",
+        4: "#54b2cc",
+        #26: "#3292c2",
         None: "#1e5fac",
     },
-    "global_linear": {
-        2: "#27F568",
-    },
-    "pub_linear": {
-        2: "#E727F5",
-    },
+    # uncomment to plot the validation results, which include the linear encoder experiments
+    # "global_linear": {
+    #     2: "#27F568",
+    # },
+    # "pub_linear": {
+    #     2: "#E727F5",
+    # },
 }
 
 

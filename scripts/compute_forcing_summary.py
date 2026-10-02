@@ -1,18 +1,9 @@
 import numpy as np
-import pandas as pd
-import geopandas as gpd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from src.datautils import load_attributes
 from pathlib import PosixPath
-from sklearn.decomposition import PCA
-import argparse
-from src.utils import str2bool,  get_basin_list, clean_and_capitalize, compute_grid
-from src.datautils import LANDSCAPE_ATTRS, CLIM_ATTRS, HYDRO_ATTRS, SOIL_ATTRS, VEGE_ATTRS, TOPO_ATTRS, GEOL_ATTRS
+from src.utils import get_basin_list
 import pickle
 from src.datasets import CamelsTXT, CamelsH5
 from main import GLOBAL_SETTINGS
-from sklearn.feature_selection import mutual_info_regression
 
 
 if __name__ == '__main__':

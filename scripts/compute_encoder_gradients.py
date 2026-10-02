@@ -1,21 +1,14 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from src.plot_utils import load_us_states
 from src.datautils import load_attributes
 from pathlib import PosixPath
-from src.utils import clean_and_capitalize
-from sklearn.decomposition import PCA
 import argparse
-from src.utils import str2bool,  get_basin_list, clean_and_capitalize
-from src.datautils import LANDSCAPE_ATTRS, CLIM_ATTRS, HYDRO_ATTRS, SOIL_ATTRS, VEGE_ATTRS, TOPO_ATTRS, GEOL_ATTRS
+from src.utils import get_basin_list
+from src.datautils import  CLIM_ATTRS, SOIL_ATTRS, VEGE_ATTRS, TOPO_ATTRS, GEOL_ATTRS
 
 from src.models import Hydro_Attention
 import glob
 import torch
-from src.datasets import CamelsTXT, CamelsH5
-from matplotlib.colors import ListedColormap, BoundaryNorm
 from tqdm import tqdm
 import pickle
 import os

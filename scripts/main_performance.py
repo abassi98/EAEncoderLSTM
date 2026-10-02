@@ -1,4 +1,3 @@
-"""Evaluate ensemble and individual runs, reusing each basin's data and metrics."""
 
 import argparse
 from collections import deque

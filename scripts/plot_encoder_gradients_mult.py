@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import torch
-from matplotlib.colors import ListedColormap, BoundaryNorm
 import pickle
 import argparse
 from src.plot_utils import add_basemap, load_us_states

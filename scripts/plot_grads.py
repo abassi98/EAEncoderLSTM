@@ -3,10 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from src.plot_utils import load_us_states
-from matplotlib.colors import ListedColormap, BoundaryNorm
 import pickle
 import argparse
-from src.utils import str2bool,  get_basin_list, clean_and_capitalize, attribute_draw_style, compute_grid
+from src.utils import get_basin_list, clean_and_capitalize, attribute_draw_style, compute_grid
 from src.datautils import LANDSCAPE_ATTRS, CLIM_ATTRS, HYDRO_ATTRS, SOIL_ATTRS, VEGE_ATTRS, TOPO_ATTRS, GEOL_ATTRS
 from pathlib import PosixPath
 from src.datautils import load_attributes

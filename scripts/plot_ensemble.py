@@ -1,10 +1,3 @@
-"""Plot cumulative basin distributions of metrics of ensemble-mean streamflow.
-
-The plain metric column (e.g. ``nse``) is evaluated after averaging streamflow
-across runs; individual-run scores and bootstrap quantiles are not averaged.
-With --leave_one_out, shade the envelope of the full and leave-one-run-out
-cumulative curves saved by compute_leave_one_out.py (not a confidence band).
-"""
 
 import argparse
 from pathlib import Path

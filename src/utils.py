@@ -1,13 +1,4 @@
-"""
-This file is part of the accompanying code to our manuscript:
 
-Kratzert, F., Klotz, D., Herrnegger, M., Sampson, A. K., Hochreiter, S., & Nearing, G. S. ( 2019). 
-Toward improved predictions in ungauged basins: Exploiting the power of machine learning.
-Water Resources Research, 55. https://doi.org/10.1029/2019WR026065 
-
-You should have received a copy of the Apache-2.0 license along with the code. If not,
-see <https://opensource.org/licenses/Apache-2.0>
-"""
 import sys
 from pathlib import Path, PosixPath
 from typing import List
@@ -173,31 +164,6 @@ def get_basin_list() -> List:
     return basins
 
 
-def ShannonEntropy(input: torch.Tensor,dim: int=-1, epsilon: float =1e-12, reduction: bool="mean"):
-    """
-    Compute the Shannon entropy along specified dimension. Reduce the other dimension by the mean.
-    The functions assumes that the sum of inputis normalized along the specified dimension.
-    Parameters:
-    -----------
-    input : torch.Tensor
-        Tensor containing the attention scores
-    dim : int
-        Dimension along which to compute Sahnnon entropy
-    epsilon : float
-        Regularization constant to avoid NaN when computing the log
-    reduction : bool
-        How to reduce the output, if average or sum over the remaining dimension.
-        If None, no reduction is applied
-    """
-    input = input + epsilon
-    if reduction is None:
-        return - torch.sum(input * torch.log(input), dim=dim)
-    elif reduction == "mean":
-        return torch.mean(- torch.sum(input * torch.log(input), dim=dim))
-    elif reduction == "sum":
-        return torch.sum(- torch.sum(input * torch.log(input), dim=dim))
-    else:
-        raise ValueError("Invalid reduction argument given.")
     
 def NSELoss(y_pred: torch.Tensor, y_true: torch.Tensor, q_stds: torch.Tensor, eps: float = 0.1):
     """Calculate (batch-wise) NSE Loss.

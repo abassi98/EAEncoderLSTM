@@ -1,9 +1,3 @@
-"""Batched versions of the metrics in performance_functions.
-
-Keep that module as the scalar reference. Predictions sharing a valid-date
-mask reuse observation statistics; different masks retain pairwise evaluation.
-"""
-
 import numpy as np
 import pandas as pd
 from numba import njit

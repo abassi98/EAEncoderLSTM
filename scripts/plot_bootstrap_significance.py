@@ -1,4 +1,3 @@
-"""Map paired-bootstrap NSE significance for successive models and attributes models."""
 
 import argparse
 import json
