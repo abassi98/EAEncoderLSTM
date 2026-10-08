@@ -112,7 +112,7 @@ def get_args():
     parser.add_argument(
         "--with_ica",
         type=str2bool,
-        default=False,
+        default=True,
         help="Use ICA for dimensionality reduction"
     )
 
@@ -693,7 +693,7 @@ if __name__ == '__main__':
                 else:
                     ax.set_title(f"{exp.upper()}-{ii_es+1}", fontsize=40)
             elif ii_exp == 0:
-                ax.set_title(f"Latent feature {ii_es+1}", fontsize=40)
+                ax.set_title(f"RAF {ii_es+1}", fontsize=40)
             if ii_es == 0 and encoded_features != 1:
                 if run is None:
                     ax.set_ylabel(f"{exp.upper()}-{encoded_features} mean", fontsize=40)
@@ -720,7 +720,7 @@ if __name__ == '__main__':
             if key not in table_dict:
                 continue
             ordered_columns.append(key)
-            multiindex_columns.append((model_name, f"LF{lf_idx}"))
+            multiindex_columns.append((model_name, f"RAF {lf_idx}"))
 
     latex_df = pd.DataFrame({key: table_dict[key] for key in ordered_columns})
     latex_df.columns = pd.MultiIndex.from_tuples(multiindex_columns)

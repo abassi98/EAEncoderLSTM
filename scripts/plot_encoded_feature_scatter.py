@@ -3,7 +3,7 @@ import pickle
 from functools import lru_cache
 from pathlib import Path
 
-import matplotlib as mpl
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from sklearn.decomposition import FastICA, PCA
 
 from src.datautils import CLIM_ATTRS, GEOL_ATTRS, SOIL_ATTRS, TOPO_ATTRS, VEGE_ATTRS, load_attributes, load_signatures
 from src.utils import clean_and_capitalize, compute_grid, get_basin_list, str2bool
-
+import matplotlib as mpl
 mpl.rcParams["xtick.labelsize"] = 14
 mpl.rcParams["ytick.labelsize"] = 14
 plt.rcParams["font.serif"] = "Times New Roman"

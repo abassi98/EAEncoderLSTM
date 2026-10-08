@@ -130,7 +130,7 @@ def build_output_path(cfg: dict, selection_label: str, target_kind: str) -> Path
 
 def get_axis_label(with_pca: bool, dim_index: int) -> str:
     """Build a latent-axis label."""
-    prefix = "PC" if with_pca else "LF"
+    prefix = "PC" if with_pca else "RAF"
     return f"{prefix} {dim_index + 1}"
 
 

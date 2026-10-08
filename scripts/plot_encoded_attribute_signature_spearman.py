@@ -78,7 +78,7 @@ def get_args():
     parser.add_argument(
         "--encoded_features",
         type=int,
-        required=True,
+        default=2,
         help="Latent space dimension used to load analysis/encoded_features/{model}_es{N}.pkl.",
     )
     parser.add_argument(
@@ -94,7 +94,7 @@ def get_args():
     parser.add_argument(
         "--with_ica",
         type=str2bool,
-        default=False,
+        default=True,
         help="After Procrustes alignment, rotate all runs with one ICA basis fitted on the consensus mean space.",
     )
     parser.add_argument(
@@ -231,7 +231,7 @@ def compute_spearman_matrices(
             pvalue_matrix[variable_idx, feature_idx] = pvalue
 
     row_names = [clean_and_capitalize(name).strip() for name in VARIABLE_NAMES]
-    col_names = [f"LF {idx + 1}" for idx in range(n_features)]
+    col_names = [f"RAF {idx + 1}" for idx in range(n_features)]
     df_corr = pd.DataFrame(corr_matrix, index=row_names, columns=col_names)
     df_pvalue = pd.DataFrame(pvalue_matrix, index=row_names, columns=col_names)
     return df_corr, df_pvalue
@@ -363,7 +363,7 @@ def summarize_pub_split_correlations(
 ) -> dict[int, tuple[pd.DataFrame, pd.DataFrame]]:
     """Aggregate absolute PUB correlations across splits independently for each run."""
     row_names = [clean_and_capitalize(name).strip() for name in VARIABLE_NAMES]
-    col_names = [f"LF {idx + 1}" for idx in range(encoded_features)]
+    col_names = [f"RAF {idx + 1}" for idx in range(encoded_features)]
     summaries = {}
 
     for run in sorted(df_raw["run"].dropna().unique()):

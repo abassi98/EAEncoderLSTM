@@ -41,14 +41,14 @@ def get_args():
     parser.add_argument(
         "--model",
         type=str,
-        default="global",
+        default="both",
         choices=["global", "pub", "both"],
         help="Model family to plot. Use 'both' to compare GLOBAL and PUB in one figure.",
     )
     parser.add_argument(
         "--encoded_features",
         type=int,
-        required=True,
+        default=2,
         help="Latent space dimension used to load analysis/encoded_features/{model}_es{N}.pkl.",
     )
     parser.add_argument(
@@ -63,7 +63,7 @@ def get_args():
     parser.add_argument(
         "--with_ica",
         type=str2bool,
-        default=False,
+        default=True,
         help="After Procrustes alignment, rotate all runs with one ICA basis fitted on the consensus mean space.",
     )
     parser.add_argument(
@@ -335,7 +335,7 @@ def plot_encoded_feature_panels(
                 zorder=3,
             )
             if model_idx == 0:
-                ax.set_title(f"LF {feature_idx + 1}", fontsize=20)
+                ax.set_title(f"RAF {feature_idx + 1}", fontsize=20)
             if feature_idx == 0:
                 ax.text(
                     -0.06,
@@ -360,7 +360,7 @@ def plot_encoded_feature_panels(
         cax=cbar_ax,
         orientation="vertical",
     )
-    colorbar.set_label("Scaled encoded feature value", fontsize=18)
+    colorbar.set_label("Scaled latent feature value", fontsize=18)
     colorbar.ax.tick_params(labelsize=12)
 
 
