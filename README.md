@@ -1,7 +1,7 @@
 # How Much Catchment Information Does an LSTM Use for Streamflow Prediction?
 [![DOI](https://zenodo.org/badge/1397413521.svg)](https://doi.org/10.5281/zenodo.23101869)
 
-Code and intermediate results for the manuscript by Alberto Bassi, Fabrizio Fenicia, Antonietta Mira and Carlo Albert (submitted to *Water Resources Research*).
+Code and intermediate results for the manuscript by Alberto Bassi, Fabrizio Fenicia, Antonietta Mira and Carlo Albert (submitted to *Water Resources Research*). The preprint is available on [ESS Open Archive](https://doi.org/10.22541/essoar.15010545/v1).
 
 ## Main idea
 
@@ -119,22 +119,23 @@ All commands run from the repository root, using the intermediate results in `an
 The models shown in Figs. 3, 4, C1 and C2, and their colours, are set by `cmodels` in `src/plot_utils.py`.
 
 All plotting scripts use `src/plot_style.py` for shared typography (18-point labels, 12-point ticks, 10-point legends) and LaTeX fonts. A LaTeX installation with `fontenc` and `mathpazo` is required (`eulervm` when enabling Euler math). Generated figures are saved as PDF at 300 dpi with tight bounding boxes; scatter points and heatmap cells are rasterized, with text and axes kept as vectors.
-<!-- 
 ## Citation
 
-If you use this code, please cite:
+If you use this code, please cite the preprint:
 
 ```bibtex
 @article{bassi_catchment_information_lstm,
   title   = {How Much Catchment Information Does an LSTM Use for Streamflow Prediction?},
   author  = {Bassi, Alberto and Fenicia, Fabrizio and Mira, Antonietta and Albert, Carlo},
-  journal = {Water Resources Research},
-  year    = {YYYY},
-  volume  = {VV},
-  pages   = {PPPP},
-  doi     = {10.XXXX/XXXXX},
+  journal = {ESS Open Archive},
+  volume  = {2026},
+  number  = {1015},
+  year    = {2026},
+  doi     = {10.22541/essoar.15010545/v1},
+  url     = {https://essopenarchive.org/doi/abs/10.22541/essoar.15010545/v1},
+  eprint  = {https://essopenarchive.org/doi/pdf/10.22541/essoar.15010545/v1},
 }
-``` -->
+```
 
 ## License
 
