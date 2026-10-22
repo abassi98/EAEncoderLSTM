@@ -1,7 +1,6 @@
 import argparse
 from pathlib import Path
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from cmcrameri import cm
@@ -14,11 +13,9 @@ from scripts.plot_encoded_feature_scatter import (
 )
 from src.utils import clean_and_capitalize, compute_grid, str2bool
 
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE
+
+configure_plot_style()
 
 DEFAULT_OUTPUT_DIR = Path("analysis/figures")
 
@@ -87,14 +84,15 @@ def get_args():
     parser.add_argument(
         "--dpi",
         type=int,
+        choices=[300],
         default=300,
-        help="Output figure DPI.",
+        help="Output figure DPI (fixed at 300).",
     )
     parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Optional output path. Defaults to analysis/figures/encoded_space_2d_*.png.",
+        help="Optional output path. Defaults to analysis/figures/encoded_space_2d_*.pdf.",
     )
     return vars(parser.parse_args())
 
@@ -115,7 +113,7 @@ def validate_cfg(cfg: dict) -> dict:
 def build_output_path(cfg: dict, selection_label: str, target_kind: str) -> Path:
     """Resolve output path for the figure."""
     if cfg["output"] is not None:
-        return Path(cfg["output"])
+        return Path(cfg["output"]).with_suffix(".pdf")
 
     if len(cfg["targets"]) == 1:
         target_label = cfg["targets"][0]
@@ -124,7 +122,7 @@ def build_output_path(cfg: dict, selection_label: str, target_kind: str) -> Path
 
     return DEFAULT_OUTPUT_DIR / (
         f"encoded_space_2d_{cfg['model']}_es{cfg['encoded_features']}_{target_kind}_"
-        f"{target_label}_{selection_label}.png"
+        f"{target_label}_{selection_label}.pdf"
     )
 
 
@@ -184,25 +182,26 @@ def plot_encoded_space_2d(
             cmap=cm.batlow,
             alpha=alpha,
             linewidths=0.0,
+            rasterized=True,
         )
 
         ax.grid(alpha=0.3)
     
-        ax.set_title(clean_and_capitalize(target_name).strip(), fontsize=22)
+        ax.set_title(clean_and_capitalize(target_name).strip(), fontsize=LABEL_FONTSIZE)
 
         colorbar = fig.colorbar(scatter, ax=ax, fraction=0.05, pad=0.03)
         #colorbar.set_label(target_kind.capitalize(), fontsize=14)
-        colorbar.ax.tick_params(labelsize=15)
+        colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
-    fig.supxlabel(get_axis_label(with_pca, x_idx), fontsize=25)
-    fig.supylabel(get_axis_label(with_pca, y_idx), fontsize=25)
+    fig.supxlabel(get_axis_label(with_pca, x_idx), fontsize=LABEL_FONTSIZE)
+    fig.supylabel(get_axis_label(with_pca, y_idx), fontsize=LABEL_FONTSIZE)
     # fig.suptitle(
     #     f"{model.upper()} - {encoded_features}",
     #     fontsize=22,
     # )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 

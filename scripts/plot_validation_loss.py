@@ -6,20 +6,17 @@ from pathlib import Path
 if "MPLCONFIGDIR" not in os.environ:
     os.environ["MPLCONFIGDIR"] = str(Path(tempfile.gettempdir()) / "matplotlib")
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 
 from src.plot_utils import cmodels
 
-mpl.rcParams["xtick.labelsize"] = 16
-mpl.rcParams["ytick.labelsize"] = 16
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, LEGEND_FONTSIZE
+
+configure_plot_style()
 
 DEFAULT_INPUT = Path("analysis/stats/val_loss.csv")
-DEFAULT_OUTPUT = Path("analysis/figures/validation_loss_global2_global26.png")
+DEFAULT_OUTPUT = Path("analysis/figures/validation_loss_global2_global26.pdf")
 
 
 def get_args() -> argparse.Namespace:
@@ -45,8 +42,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--dpi",
         type=int,
+        choices=[300],
         default=300,
-        help="Output figure DPI.",
+        help="Output figure DPI (fixed at 300).",
     )
     return parser.parse_args()
 
@@ -71,7 +69,7 @@ def find_loss_column(columns: list[str], model_token: str) -> str:
 def main() -> None:
     args = get_args()
     input_path = Path(args.input)
-    output_path = Path(args.output)
+    output_path = Path(args.output).with_suffix(".pdf")
 
     if not input_path.is_file():
         raise FileNotFoundError(f"Missing validation-loss CSV: {input_path}")
@@ -111,12 +109,12 @@ def main() -> None:
     #ax.set_ylim(0.97,1)
     #ax.set_yscale("log")
     ax.grid(alpha=0.3)
-    ax.set_xlabel("Epoch", fontsize=18)
-    ax.set_ylabel("Validation NSE", fontsize=18)
-    ax.legend(frameon=False, fontsize=14)
+    ax.set_xlabel("Epoch", fontsize=LABEL_FONTSIZE)
+    ax.set_ylabel("Validation NSE", fontsize=LABEL_FONTSIZE)
+    ax.legend(frameon=False, fontsize=LEGEND_FONTSIZE)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=args.dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
     print(f"Saved figure to {output_path}")

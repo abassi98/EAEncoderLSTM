@@ -2,7 +2,6 @@
 import argparse
 from pathlib import Path
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,13 +11,9 @@ from src.plot_utils import get_bootstrap_plot_models
 from scripts.compute_leave_one_out import load_leave_one_out
 
 
-mpl.rcParams["xtick.labelsize"] = 20
-mpl.rcParams["ytick.labelsize"] = 20
-mpl.rc("text", usetex=True)
-mpl.rc("text.latex", preamble=r"\usepackage{amsmath} \usepackage{amsfonts}")
-mpl.rcParams["font.serif"] = "Times New Roman"
-mpl.rcParams["font.family"] = "serif"
-mpl.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE
+
+configure_plot_style()
 
 
 def get_args():
@@ -127,20 +122,20 @@ def main():
             )
 
         ax.grid()
-        ax.set_title(f"{family.upper()} models", fontsize=22, fontweight="bold")
+        ax.set_title(f"{family.upper()} models", fontsize=LABEL_FONTSIZE, fontweight="bold")
         ax.set_xlabel("")
         ax.set_ylabel("")
         ax.set_xlim(args.xmin, args.xmax)
         ax.legend()
 
     period = "Test" if args.eval_period == "test" else "Validation"
-    fig.supxlabel(f"{period} {args.metric.upper()}", fontweight="bold", fontsize=25)
+    fig.supxlabel(f"{period} {args.metric.upper()}", fontweight="bold", fontsize=LABEL_FONTSIZE)
     suffix = "_leave_one_out" if args.leave_one_out else ""
     output = Path("analysis/figures") / (
-        f"ensemble_{args.metric}_cumulative_{args.eval_period}{suffix}.png"
+        f"ensemble_{args.metric}_cumulative_{args.eval_period}{suffix}.pdf"
     )
     output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output, dpi=300)
+    fig.savefig(output, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
     print(f"Saved {output}")
 

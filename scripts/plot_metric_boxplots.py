@@ -9,7 +9,6 @@ MPLCONFIGDIR = ROOT / ".mplconfig"
 MPLCONFIGDIR.mkdir(exist_ok=True)
 os.environ.setdefault("MPLCONFIGDIR", str(MPLCONFIGDIR))
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -18,15 +17,10 @@ if str(ROOT) not in sys.path:
 
 from src.plot_utils import cmodels
 
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext="ttf")[:10]
-mpl.rc("text", usetex=True)
-mpl.rc("text.latex", preamble=r"\usepackage{amsmath} \usepackage{amsfonts}")
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE
 
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+configure_plot_style()
+
 
 METRIC_CHOICES = [
     "nse",
@@ -194,7 +188,7 @@ if __name__ == "__main__":
             patch.set_facecolor(palette[model_label])
             patch.set_alpha(0.9)
 
-        ax.set_title(get_metric_label(metric), fontsize=18, fontweight="bold")
+        ax.set_title(get_metric_label(metric), fontsize=LABEL_FONTSIZE, fontweight="bold")
         if metric in YLIMS:
             ax.set_ylim(*YLIMS[metric])
         ax.set_xlabel("")
@@ -204,6 +198,6 @@ if __name__ == "__main__":
     for ax in axs[len(metrics):]:
         ax.axis("off")
 
-    fig.supylabel("Metric value", fontsize=18)
-    fig.supxlabel("Model", fontsize=18)
-    fig.savefig(f"analysis/figures/boxplots_{eval_period}.png", dpi=300)
+    fig.supylabel("Metric value", fontsize=LABEL_FONTSIZE)
+    fig.supxlabel("Model", fontsize=LABEL_FONTSIZE)
+    fig.savefig(f"analysis/figures/boxplots_{eval_period}.pdf", dpi=300, bbox_inches="tight", format="pdf")

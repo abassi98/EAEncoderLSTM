@@ -32,9 +32,9 @@ try:
 except ImportError:
     MODEL_CMAP = plt.get_cmap("RdBu_r")
 
-mpl.rcParams["font.family"] = "serif"
-mpl.rcParams["font.serif"] = "Times New Roman"
-mpl.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE, LEGEND_FONTSIZE
+
+configure_plot_style()
 
 ROOT = Path(__file__).resolve().parents[1]  # repository root
 P_THRESHOLDS = (0.05, 0.10, 0.15)
@@ -54,7 +54,7 @@ def get_args():
     parser.add_argument("--alphas", "--alpha", type=float, nargs="+",
                         help="Alphas for win/loss/unresolved maps; defaults to the saved comparison alpha.")
     parser.add_argument("--evidence-maps", action="store_true",
-                        help="Also save the old fixed-p-value colour-band maps as bootstrap_evidence_*.png.")
+                        help="Also save the old fixed-p-value colour-band maps as bootstrap_evidence_*.pdf.")
     parser.add_argument("--strict", action="store_true", help="Stop if a requested comparison is missing instead of marking its panel unavailable.")
     return parser.parse_args()
 
@@ -130,12 +130,12 @@ def plot_maps(pairs, coordinates, state_polygons, experiment, kind, config, outp
     fig, axes = plt.subplots(nrows, 2, figsize=(24, 6.5 * nrows + 3), squeeze=False)
 
     for ax, ((model_a, model_b), pair) in zip(axes.flat, pairs.items()):
-        ax.set_title(f"NSE {model_a} minus {model_b}", fontsize=35, pad=20)
+        ax.set_title(f"NSE {model_a} minus {model_b}", fontsize=LABEL_FONTSIZE, pad=20)
         if pair is None:
             ax.set_axis_off()
             ax.text(0.5, 0.5, f"Comparison unavailable\n{model_a} / {model_b}\n\n"
                     "Include both models in compare_bootstrap.py.",
-                    transform=ax.transAxes, ha="center", va="center", fontsize=17, color="#666666")
+                    transform=ax.transAxes, ha="center", va="center", fontsize=LABEL_FONTSIZE, color="#666666")
             continue
         ax.add_collection(LineCollection(state_polygons, colors="black", linewidths=0.4, zorder=0))
         ax.set_xlim(-128, -65)
@@ -149,23 +149,23 @@ def plot_maps(pairs, coordinates, state_polygons, experiment, kind, config, outp
             unresolved = ~(better | worse)
             for mask, color in ((unresolved, UNRESOLVED_COLOR), (better, WIN_COLOR), (worse, LOSS_COLOR)):
                 ax.scatter(locations.loc[mask, "gauge_lon"], locations.loc[mask, "gauge_lat"],
-                           c=color, s=100, edgecolors="#555555", linewidths=0.3)
+                           c=color, s=100, edgecolors="#555555", linewidths=0.3, rasterized=True)
             ax.text(0.5, -0.035,
-                    f"At α = {alpha:g}: {better.sum()} first wins | {worse.sum()} second wins | "
+                    f"At $\\alpha$ = {alpha:g}: {better.sum()} first wins | {worse.sum()} second wins | "
                     f"{unresolved.sum()} unresolved",
-                    transform=ax.transAxes, ha="center", va="top", fontsize=14)
+                    transform=ax.transAxes, ha="center", va="top", fontsize=LABEL_FONTSIZE)
             continue
         for mask in (grades == 0, np.isfinite(grades) & (grades != 0)):
             ax.scatter(locations.loc[mask, "gauge_lon"], locations.loc[mask, "gauge_lat"],
-                       c=grades[mask], cmap=cmap, norm=norm, s=100, edgecolors="#555555", linewidths=0.3)
+                       c=grades[mask], cmap=cmap, norm=norm, s=100, edgecolors="#555555", linewidths=0.3, rasterized=True)
         missing = ~np.isfinite(grades)
         ax.scatter(locations.loc[missing, "gauge_lon"], locations.loc[missing, "gauge_lat"],
-                   marker="x", c="black", s=100, linewidths=1.2)
+                   marker="x", c="black", s=100, linewidths=1.2, rasterized=True)
         no_difference = ~missing & ~better & ~worse
         ax.text(0.5, -0.035,
-                f"At α = {alpha:g}, first model: {better.sum()} better | {worse.sum()} worse | "
+                f"At $\\alpha$ = {alpha:g}, first model: {better.sum()} better | {worse.sum()} worse | "
                 f"{no_difference.sum()} no difference detected | {missing.sum()} untested",
-                transform=ax.transAxes, ha="center", va="top", fontsize=14)
+                transform=ax.transAxes, ha="center", va="top", fontsize=LABEL_FONTSIZE)
     for ax in axes.flat[len(pairs):]:
         ax.set_axis_off()
 
@@ -180,21 +180,21 @@ def plot_maps(pairs, coordinates, state_polygons, experiment, kind, config, outp
                           )]
         level_label = "FDR target" if config["correction"] in ("fdr_by", "fdr_bh") else "Significance level"
         fig.legend(handles=handles, loc="lower center", ncol=3,
-                   bbox_to_anchor=(0.5, 0.10 if nrows == 1 else 0.05), fontsize=20,
-                   title=(f"{level_label} α = {alpha:g}\n"
-                          f"Wins require adjusted p ≤ α ({config['correction']})"), title_fontsize=22)
+                   bbox_to_anchor=(0.5, 0.10 if nrows == 1 else 0.05), fontsize=LEGEND_FONTSIZE,
+                   title=(f"{level_label} $\\alpha$ = {alpha:g}\n"
+                          f"Wins require adjusted p $\\leq$ $\\alpha$ ({config['correction']})"), title_fontsize=LABEL_FONTSIZE)
     else:
         cax = fig.add_axes([0.10, 0.18 if nrows == 1 else 0.10, 0.80, 0.03 if nrows == 1 else 0.02])
         colorbar = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax,
                                orientation="horizontal", ticks=np.arange(-3, 4))
         low, middle, high = P_THRESHOLDS
-        intervals = [f"p ≤ {low:.2f}", f"{low:.2f} < p ≤ {middle:.2f}", f"{middle:.2f} < p ≤ {high:.2f}"]
+        intervals = [f"p $\\leq$ {low:.2f}", f"{low:.2f} < p $\\leq$ {middle:.2f}", f"{middle:.2f} < p $\\leq$ {high:.2f}"]
         colorbar.set_ticklabels([f"Worse\n{interval}" for interval in intervals]
                                + [f"No detected\ndifference\np > {high:.2f}"]
                                + [f"Better\n{interval}" for interval in reversed(intervals)])
-        colorbar.ax.tick_params(labelsize=20)
-        colorbar.set_label(r"Significance of $\Delta$ NSE (adjusted $p$)", fontsize=25, labelpad=12)
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
+        colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
+        colorbar.set_label(r"Significance of $\Delta$ NSE (adjusted $p$)", fontsize=LABEL_FONTSIZE, labelpad=12)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
     if alias_path is not None:
         shutil.copyfile(output_path, alias_path)
@@ -253,7 +253,7 @@ def generate_maps(comparison_dir, output_dir, eval_period=None, attributes_db=RO
     decision_counts = []
     for (experiment, kind), pairs in figures.items():
         if evidence_maps:
-            evidence_path = output_dir / f"bootstrap_evidence_{kind}_{experiment}_{eval_period}.png"
+            evidence_path = output_dir / f"bootstrap_evidence_{kind}_{experiment}_{eval_period}.pdf"
             plot_maps(pairs, coordinates, state_polygons, experiment, kind, config, evidence_path,
                       decisions_only=False)
             print(f"Saved {evidence_path.resolve()}", flush=True)
@@ -277,8 +277,8 @@ def generate_maps(comparison_dir, output_dir, eval_period=None, attributes_db=RO
                 print(message, flush=True)
                 previous_decisions[a, b] = alpha, wins, losses
             tag = str(float(alpha)).replace(".", "p")
-            decision_path = output_dir / f"bootstrap_decisions_{kind}_{experiment}_{eval_period}_alpha{tag}.png"
-            alias_path = (output_dir / f"bootstrap_significance_{kind}_{experiment}_{eval_period}.png"
+            decision_path = output_dir / f"bootstrap_decisions_{kind}_{experiment}_{eval_period}_alpha{tag}.pdf"
+            alias_path = (output_dir / f"bootstrap_significance_{kind}_{experiment}_{eval_period}.pdf"
                           if alpha_index == 0 else None)
             plot_maps(pairs, coordinates, state_polygons, experiment, kind, {**config, "alpha": alpha},
                       decision_path, decisions_only=True, alias_path=alias_path)

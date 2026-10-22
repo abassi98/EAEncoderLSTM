@@ -13,20 +13,10 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from matplotlib.lines import Line2D
 
-import matplotlib as mpl
-mpl.rcParams['xtick.labelsize'] = 20 
-mpl.rcParams['ytick.labelsize'] = 20 
-#matplotlib.font_manager.findfont("Symbol")
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')[:10]
-mpl.rc('text', usetex=True)
-mpl.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amsfonts}')
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, LEGEND_FONTSIZE
 
-# Say, "the default sans-serif font is COMIC SANS"
-plt.rcParams['font.serif'] = "Times New Roman"
-# Then, "ALWAYS use sans-serif fonts"
-plt.rcParams['font.family'] = "serif"
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
-#plt.rcParams['font.weight'] = 'bold'
+configure_plot_style()
+
 
 
 def get_args():
@@ -310,7 +300,7 @@ if __name__ == '__main__':
             marker = attribute_draw_style[attr_name]["marker"]
             color = attribute_draw_style[attr_name]["color"]
 
-            ax.scatter(x=lon.loc[basin], y=lat.loc[basin], c=color,  s=200, marker=marker, edgecolor='black', alpha=0.8)
+            ax.scatter(x=lon.loc[basin], y=lat.loc[basin], c=color,  s=200, marker=marker, edgecolor='black', alpha=0.8, rasterized=True)
 
         sensitivity = pd.DataFrame(np.array(sensitivity), index=basins, columns=df_attributes.columns)
         #print(sensitivity.sum(axis=0))
@@ -321,7 +311,7 @@ if __name__ == '__main__':
     
         print(sensitivity.mean(axis=0).sort_values(ascending=False))
         if run == 0:
-            ax.set_title(f"Encoded feature {ii_es+1}", fontsize=30)
+            ax.set_title(f"Encoded feature {ii_es+1}", fontsize=LABEL_FONTSIZE)
         
     legend_items = {}
 
@@ -351,12 +341,12 @@ if __name__ == '__main__':
         loc="lower center",
         bbox_to_anchor=(0.5, -0.0),
         ncol=3,
-        fontsize=20
+        fontsize=LEGEND_FONTSIZE
     )
 
     # reserve space at bottom
     plt.tight_layout(rect=[0, 0.1, 1, 1])
     
 
-    fig.savefig(f"analysis/figures/grad_sim_{cfg['proximity']}_nn{cfg['nn']}_{experiment}_run{run}_es{encoded_features}_rank{rank}.png", dpi=300)
+    fig.savefig(f"analysis/figures/grad_sim_{cfg['proximity']}_nn{cfg['nn']}_{experiment}_run{run}_es{encoded_features}_rank{rank}.pdf", dpi=300, bbox_inches="tight", format="pdf")
     

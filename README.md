@@ -34,7 +34,7 @@ analysis/            intermediate results used for the figures: stats/, encoded_
 train_*.sh, run_*.sh SLURM job scripts for training and post-processing
 ```
 
-Trained checkpoints, the ensemble streamflow predictions (`analysis/results_data/`) and the 5,000-replicate bootstrap files are not included because of their size. Everything needed to regenerate the figures from the intermediate results is in `analysis/`.
+Trained checkpoints, the ensemble streamflow predictions (`analysis/results_data/`) and the 5,000-replicate bootstrap files are not included because of their size. The intermediate results are in `analysis/`; the scripts that regenerate figures are in `scripts/`.
 
 ## Installation
 
@@ -117,6 +117,8 @@ All commands run from the repository root, using the intermediate results in `an
 | D1-D4 | `python -m scripts.plot_bootstrap_significance --comparison-dir analysis/bootstrap/comparisons_alpha0.05` |
 
 The models shown in Figs. 3, 4, C1 and C2, and their colours, are set by `cmodels` in `src/plot_utils.py`.
+
+All plotting scripts use `src/plot_style.py` for shared typography (18-point labels, 12-point ticks, 10-point legends) and LaTeX fonts. A LaTeX installation with `fontenc` and `mathpazo` is required (`eulervm` when enabling Euler math). Generated figures are saved as PDF at 300 dpi with tight bounding boxes; scatter points and heatmap cells are rasterized, with text and axes kept as vectors.
 <!-- 
 ## Citation
 

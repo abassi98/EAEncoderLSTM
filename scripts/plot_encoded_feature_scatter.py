@@ -13,12 +13,9 @@ from sklearn.decomposition import FastICA, PCA
 
 from src.datautils import CLIM_ATTRS, GEOL_ATTRS, SOIL_ATTRS, TOPO_ATTRS, VEGE_ATTRS, load_attributes, load_signatures
 from src.utils import clean_and_capitalize, compute_grid, get_basin_list, str2bool
-import matplotlib as mpl
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE
+
+configure_plot_style()
 
 DEFAULT_OUTPUT_DIR = Path("analysis/figures")
 BASIN_ATTR_DB = Path("data/attributes.db")
@@ -108,14 +105,15 @@ def get_args():
     parser.add_argument(
         "--dpi",
         type=int,
+        choices=[300],
         default=300,
-        help="Output figure DPI.",
+        help="Output figure DPI (fixed at 300).",
     )
     parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Optional output path. Defaults to analysis/figures/encoded_feature_scatter_*.png.",
+        help="Optional output path. Defaults to analysis/figures/encoded_feature_scatter_*.pdf.",
     )
     return vars(parser.parse_args())
 
@@ -610,11 +608,11 @@ def load_target_series(basins: list[str], target: str) -> tuple[pd.Series, str]:
 def build_output_path(cfg: dict, selection_label: str, target_kind: str) -> Path:
     """Resolve output path for the figure."""
     if cfg["output"] is not None:
-        return Path(cfg["output"])
+        return Path(cfg["output"]).with_suffix(".pdf")
 
     return DEFAULT_OUTPUT_DIR / (
         f"encoded_feature_scatter_{cfg['model']}_es{cfg['encoded_features']}_{target_kind}_"
-        f"{cfg['target']}_{selection_label}.png"
+        f"{cfg['target']}_{selection_label}.pdf"
     )
 
 
@@ -662,6 +660,7 @@ def plot_feature_scatter_grid(
             alpha=alpha,
             color="#2166AC",
             edgecolors="none",
+            rasterized=True,
         )
 
         if x_plot.size >= 2:
@@ -673,9 +672,9 @@ def plot_feature_scatter_grid(
             corr, pvalue = np.nan, np.nan
 
         ax.grid(alpha=0.3)
-        ax.set_title(f"EF {feature_idx + 1}", fontsize=18)
-        ax.set_xlabel(x_label, fontsize=16)
-        ax.set_ylabel("Encoded feature value", fontsize=16)
+        ax.set_title(f"EF {feature_idx + 1}", fontsize=LABEL_FONTSIZE)
+        ax.set_xlabel(x_label, fontsize=LABEL_FONTSIZE)
+        ax.set_ylabel("Encoded feature value", fontsize=LABEL_FONTSIZE)
         ax.text(
             0.03,
             0.97,
@@ -683,7 +682,7 @@ def plot_feature_scatter_grid(
             transform=ax.transAxes,
             va="top",
             ha="left",
-            fontsize=13,
+            fontsize=LABEL_FONTSIZE,
             bbox=dict(boxstyle="round", facecolor="white", alpha=0.85, edgecolor="#d1d5db"),
         )
 
@@ -691,10 +690,10 @@ def plot_feature_scatter_grid(
         f"{model.upper()} encoded features vs {target_kind} "
         f"{x_label} (ES={encoded_features}, {selection_label})"
     )
-    fig.suptitle(figure_title, fontsize=22)
+    fig.suptitle(figure_title, fontsize=LABEL_FONTSIZE)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 

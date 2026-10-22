@@ -11,23 +11,13 @@ from src.plot_utils import (
 )
 from pathlib import PosixPath
 import pickle
-import matplotlib as mpl
 from scripts.plot_ensemble import plot_sensitivity
 from scripts.compute_leave_one_out import load_leave_one_out
 
-mpl.rcParams['xtick.labelsize'] = 20 
-mpl.rcParams['ytick.labelsize'] = 20 
-#matplotlib.font_manager.findfont("Symbol")
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')[:10]
-mpl.rc('text', usetex=True)
-mpl.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amsfonts}')
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE
 
-# Say, "the default sans-serif font is COMIC SANS"
-plt.rcParams['font.serif'] = "Times New Roman"
-# Then, "ALWAYS use sans-serif fonts"
-plt.rcParams['font.family'] = "serif"
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
-#plt.rcParams['font.weight'] = 'bold'
+configure_plot_style()
+
 
 
 def get_args():
@@ -370,7 +360,7 @@ if __name__ == '__main__':
             axi.lines[-1].remove()
             axi.lines[-1].remove()
 
-        axi.set_title(title, fontsize=22, fontweight="bold")
+        axi.set_title(title, fontsize=LABEL_FONTSIZE, fontweight="bold")
         axi.set_ylabel("")
         axi.set_xlabel("")
         axi.set_xlim([xmin, xmax])
@@ -427,7 +417,7 @@ if __name__ == '__main__':
         title,
         rotation=0,
         fontweight="bold",
-        fontsize=25,
+        fontsize=LABEL_FONTSIZE,
     )
 
     output_suffix = "_restart_envelope" if cfg["restart_envelope"] else ""
@@ -436,10 +426,10 @@ if __name__ == '__main__':
     if cfg["random_features_models"]:
         output_suffix += "_with_random_features"
     output_path = PosixPath(
-        f"analysis/figures/bootstrap_{metric}_cumulative_{cfg['eval_period']}{output_suffix}.png"
+        f"analysis/figures/bootstrap_{metric}_cumulative_{cfg['eval_period']}{output_suffix}.pdf"
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=300)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
     print(f"Saved {output_path}")
     # # Create formatted dataframe

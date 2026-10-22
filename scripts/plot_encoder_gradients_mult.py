@@ -18,24 +18,10 @@ from sklearn.preprocessing import StandardScaler
 from scipy.linalg import orthogonal_procrustes
 from matplotlib.lines import Line2D
 
-import matplotlib as mpl
-mpl.rcParams['xtick.labelsize'] = 20 
-mpl.rcParams['ytick.labelsize'] = 20 
-#matplotlib.font_manager.findfont("Symbol")
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')[:10]
-mpl.rc('text', usetex=True)
-mpl.rc(
-    'text.latex',
-    preamble=r'\usepackage{amsmath} \usepackage{amsfonts} \usepackage{xcolor}'
-)
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, LEGEND_FONTSIZE
 
-# Say, "the default sans-serif font is COMIC SANS"
-plt.rcParams['font.serif'] = "Times New Roman"
-# Then, "ALWAYS use sans-serif fonts"
-plt.rcParams['font.family'] = "serif"
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
-#plt.rcParams['font.weight'] = 'bold'
-mpl.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amsfonts} \usepackage{xcolor}')
+configure_plot_style()
+
 
 LABEL_TO_ATTR = {
     clean_and_capitalize(attr): attr
@@ -661,6 +647,7 @@ if __name__ == '__main__':
                 linewidth=2.0,
                 alpha=1.0,
                 zorder=2.5,
+                rasterized=True,
             )
 
             for basin in basins:
@@ -681,6 +668,7 @@ if __name__ == '__main__':
                     edgecolor='black',
                     alpha=0.8,
                     zorder=3,
+                    rasterized=True,
                 )
             mean_sensitivity = sensitivity.mean(axis=0).sort_values(ascending=False)
             mean_sensitivity.index = [clean_and_capitalize(ind) for ind in mean_sensitivity.index]
@@ -689,16 +677,16 @@ if __name__ == '__main__':
 
             if encoded_features == 1:
                 if run is None:
-                    ax.set_title(f"{exp.upper()}-{ii_es+1} mean", fontsize=40)
+                    ax.set_title(f"{exp.upper()}-{ii_es+1} mean", fontsize=LABEL_FONTSIZE)
                 else:
-                    ax.set_title(f"{exp.upper()}-{ii_es+1}", fontsize=40)
+                    ax.set_title(f"{exp.upper()}-{ii_es+1}", fontsize=LABEL_FONTSIZE)
             elif ii_exp == 0:
-                ax.set_title(f"RAF {ii_es+1}", fontsize=40)
+                ax.set_title(f"RAF {ii_es+1}", fontsize=LABEL_FONTSIZE)
             if ii_es == 0 and encoded_features != 1:
                 if run is None:
-                    ax.set_ylabel(f"{exp.upper()}-{encoded_features} mean", fontsize=40)
+                    ax.set_ylabel(f"{exp.upper()}-{encoded_features} mean", fontsize=LABEL_FONTSIZE)
                 else:
-                    ax.set_ylabel(f"{exp.upper()}-{encoded_features}", fontsize=40)
+                    ax.set_ylabel(f"{exp.upper()}-{encoded_features}", fontsize=LABEL_FONTSIZE)
     
   
     table_dict = {}
@@ -762,13 +750,14 @@ if __name__ == '__main__':
         loc="lower center",
         bbox_to_anchor=(0.5, 0.04),
         ncol=5,
-        fontsize=30
+        fontsize=LEGEND_FONTSIZE
     )
     
 
     run_label = "mean" if run is None else f"run{run}"
     fig.savefig(
-        f"analysis/figures/grad_sim_{cfg['proximity']}_nn{cfg['nn']}_{run_label}_es{encoded_features}_ica{with_ica}_rank{rank}.png",
+        f"analysis/figures/grad_sim_{cfg['proximity']}_nn{cfg['nn']}_{run_label}_es{encoded_features}_ica{with_ica}_rank{rank}.pdf",
         dpi=300,
+        bbox_inches="tight", format="pdf",
     )
     

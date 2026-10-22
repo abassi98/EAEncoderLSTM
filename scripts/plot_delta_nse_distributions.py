@@ -2,7 +2,6 @@
 import argparse
 from pathlib import Path
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,9 +9,9 @@ import seaborn as sns
 from cmcrameri import cm
 
 
-mpl.rcParams["font.family"] = "serif"
-mpl.rcParams["font.serif"] = "Times New Roman"
-mpl.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE
+
+configure_plot_style()
 
 EXPERIMENTS = {
     "global": [0, 1, 2, 4, 26],
@@ -92,9 +91,9 @@ def plot_distributions(ax, delta_nse_long, transitions, title, y_limit):
     ax.axhline(0, color="black", linestyle="--", linewidth=1.2)
     ax.set_ylim(-y_limit, y_limit)
     ax.grid(axis="y", alpha=0.3)
-    ax.set_title(title, fontsize=24)
+    ax.set_title(title, fontsize=LABEL_FONTSIZE)
     
-    ax.tick_params(axis="x", rotation=15, labelsize=14)
+    ax.tick_params(axis="x", rotation=15, labelsize=TICK_FONTSIZE)
 
     y_text = y_limit * 0.92
     for idx, transition in enumerate(transitions):
@@ -104,7 +103,7 @@ def plot_distributions(ax, delta_nse_long, transitions, title, y_limit):
             f"{positive_fraction[transition]:.0%} > 0",
             ha="center",
             va="top",
-            fontsize=12,
+            fontsize=LABEL_FONTSIZE,
         )
 
 
@@ -130,12 +129,12 @@ def main():
             experiment.upper(),
             y_limit,
         )
-    fig.supylabel(r"$\Delta$ NSE", fontsize=20)
-    fig.supxlabel("Successive model transition", fontsize=18)
+    fig.supylabel(r"$\Delta$ NSE", fontsize=LABEL_FONTSIZE)
+    fig.supxlabel("Successive model transition", fontsize=LABEL_FONTSIZE)
     fig.tight_layout(rect=(0.03, 0, 1, 1))
-    output_path = Path("analysis") / "figures" / f"delta_nse_distribution_global_pub_{args.eval_period}.png"
+    output_path = Path("analysis") / "figures" / f"delta_nse_distribution_global_pub_{args.eval_period}.pdf"
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=300)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
 
 
 if __name__ == "__main__":

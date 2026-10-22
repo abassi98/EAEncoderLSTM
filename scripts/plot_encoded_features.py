@@ -19,11 +19,9 @@ from scripts.plot_encoded_feature_scatter import (
 from src.datautils import load_attributes
 from src.utils import compute_grid, get_basin_list, str2bool
 
-mpl.rcParams["xtick.labelsize"] = 16
-mpl.rcParams["ytick.labelsize"] = 16
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE
+
+configure_plot_style()
 
 DEFAULT_OUTPUT_DIR = Path("analysis/figures")
 BASIN_ATTR_DB = Path("data/attributes.db")
@@ -88,14 +86,15 @@ def get_args():
     parser.add_argument(
         "--dpi",
         type=int,
+        choices=[300],
         default=300,
-        help="Output figure DPI.",
+        help="Output figure DPI (fixed at 300).",
     )
     parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Optional output path. Defaults to analysis/figures/encoded_features_*.png.",
+        help="Optional output path. Defaults to analysis/figures/encoded_features_*.pdf.",
     )
     return vars(parser.parse_args())
 
@@ -265,10 +264,10 @@ def draw_background_map(ax, basemap: str, us_states, fallback_polygons: list[lis
 def build_output_path(cfg: dict, selection_label: str) -> Path:
     """Resolve output path for the figure."""
     if cfg["output"] is not None:
-        return Path(cfg["output"])
+        return Path(cfg["output"]).with_suffix(".pdf")
 
     return DEFAULT_OUTPUT_DIR / (
-        f"encoded_features_{cfg['model']}_es{cfg['encoded_features']}_{selection_label}_{cfg['basemap']}.png"
+        f"encoded_features_{cfg['model']}_es{cfg['encoded_features']}_{selection_label}_{cfg['basemap']}.pdf"
     )
 
 
@@ -333,9 +332,10 @@ def plot_encoded_feature_panels(
                 linewidths=0.0,
                 alpha=0.95,
                 zorder=3,
+                rasterized=True,
             )
             if model_idx == 0:
-                ax.set_title(f"RAF {feature_idx + 1}", fontsize=20)
+                ax.set_title(f"RAF {feature_idx + 1}", fontsize=LABEL_FONTSIZE)
             if feature_idx == 0:
                 ax.text(
                     -0.06,
@@ -345,7 +345,7 @@ def plot_encoded_feature_panels(
                     rotation=90,
                     ha="center",
                     va="center",
-                    fontsize=20,
+                    fontsize=LABEL_FONTSIZE,
                 )
 
     if n_models > 1:
@@ -360,12 +360,12 @@ def plot_encoded_feature_panels(
         cax=cbar_ax,
         orientation="vertical",
     )
-    colorbar.set_label("Scaled latent feature value", fontsize=18)
-    colorbar.ax.tick_params(labelsize=12)
+    colorbar.set_label("Scaled latent feature value", fontsize=LABEL_FONTSIZE)
+    colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
 
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 

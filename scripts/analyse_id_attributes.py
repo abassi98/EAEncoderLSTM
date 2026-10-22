@@ -7,19 +7,10 @@ from src.utils import get_basin_list
 from src.datautils import load_attributes, CLIM_ATTRS, TOPO_ATTRS, GEOL_ATTRS, SOIL_ATTRS, VEGE_ATTRS
 
 
-import matplotlib as mpl
-mpl.rcParams['xtick.labelsize'] = 20 
-mpl.rcParams['ytick.labelsize'] = 20 
-#matplotlib.font_manager.findfont("Symbol")
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')[:10]
-mpl.rc('text', usetex=True)
-mpl.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amsfonts}')
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE
 
-# Say, "the default sans-serif font is COMIC SANS"
-plt.rcParams['font.serif'] = "Times New Roman"
-# Then, "ALWAYS use sans-serif fonts"
-plt.rcParams['font.family'] = "serif"
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+configure_plot_style()
+
 
 
 def plot():
@@ -71,13 +62,13 @@ def plot():
     )
 
     ax.set_xscale("log")
-    ax.set_xlabel(r"Neighbourhood average distance", fontsize=22)
-    ax.set_ylabel(r"Intrinsic dimension (ID)", fontsize=22)
+    ax.set_xlabel(r"Neighbourhood average distance", fontsize=LABEL_FONTSIZE)
+    ax.set_ylabel(r"Intrinsic dimension (ID)", fontsize=LABEL_FONTSIZE)
    
     ax.grid(True, alpha=0.3, which="both")
     fig.tight_layout()
 
-    plt.savefig("analysis/figures/gride_known_attr.png", dpi=300, bbox_inches="tight")
+    plt.savefig("analysis/figures/gride_known_attr.pdf", dpi=300, bbox_inches="tight", format="pdf")
     
 
     return ids_gride, ids_err_gride, rs_gride

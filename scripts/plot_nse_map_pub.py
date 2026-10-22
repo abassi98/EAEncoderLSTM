@@ -11,20 +11,10 @@ from scipy.stats import pearsonr
 from cmcrameri import cm
 from src.plot_utils import cmodels, load_us_states
 
-import matplotlib as mpl
-mpl.rcParams['xtick.labelsize'] = 20 
-mpl.rcParams['ytick.labelsize'] = 20 
-#matplotlib.font_manager.findfont("Symbol")
-mpl.font_manager.findSystemFonts(fontpaths=None, fontext='ttf')[:10]
-mpl.rc('text', usetex=True)
-mpl.rc('text.latex', preamble=r'\usepackage{amsmath} \usepackage{amsfonts} \usepackage{xcolor}')
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE
 
-# Say, "the default sans-serif font is COMIC SANS"
-plt.rcParams['font.serif'] = "Times New Roman"
-# Then, "ALWAYS use sans-serif fonts"
-plt.rcParams['font.family'] = "serif"
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
-#plt.rcParams['font.weight'] = 'bold'
+configure_plot_style()
+
 
 LABEL_TO_ATTR = {
     clean_and_capitalize(attr): attr
@@ -98,9 +88,9 @@ def save_and_plot_delta_nse_distributions(delta_nse_by_pair, experiment, eval_pe
 
     ax.axhline(0, color="black", linestyle="--", linewidth=1.2)
     ax.grid(axis="y", alpha=0.3)
-    ax.set_xlabel("Successive model transition", fontsize=25)
-    ax.set_ylabel(r"$\Delta$ NSE", fontsize=25)
-    ax.tick_params(axis="x", rotation=15, labelsize=18)
+    ax.set_xlabel("Successive model transition", fontsize=LABEL_FONTSIZE)
+    ax.set_ylabel(r"$\Delta$ NSE", fontsize=LABEL_FONTSIZE)
+    ax.tick_params(axis="x", rotation=15, labelsize=TICK_FONTSIZE)
 
     # Focus the figure on the central distribution; the CSV retains all outliers.
     y_limit = max(abs(delta_nse_long["delta_nse"].quantile(0.01)),
@@ -116,13 +106,14 @@ def save_and_plot_delta_nse_distributions(delta_nse_by_pair, experiment, eval_pe
             f"{positive_fraction[transition]:.0%} > 0",
             ha="center",
             va="top",
-            fontsize=14,
+            fontsize=LABEL_FONTSIZE,
         )
 
     fig.tight_layout()
     fig.savefig(
-        f"analysis/figures/delta_nse_distribution_{experiment}_{eval_period}.png",
+        f"analysis/figures/delta_nse_distribution_{experiment}_{eval_period}.pdf",
         dpi=300,
+        bbox_inches="tight", format="pdf",
     )
 
 
@@ -238,20 +229,20 @@ if __name__ == '__main__':
             candidates["delta_nse"] >= cutoff, ["delta_nse", "previous_nse"]
         ]
         
-        im = ax[row, column].scatter(x=lon, y=lat,c=color, s=100, cmap=cm.roma_r, vmin=vmin,vmax=vmax )
-        ax[row, column].set_title(f"NSE {experiment.upper()}-{encoded_features_vec[ii]} minus {experiment.upper()}-{encoded_features_vec[ii-1]}", fontsize=35, y=-0.2)
-        ax[row, column+1].set_ylabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii-1]}", fontsize=35)
-        ax[row, column+1].set_xlabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii]}", fontsize=35)
+        im = ax[row, column].scatter(x=lon, y=lat,c=color, s=100, cmap=cm.roma_r, vmin=vmin,vmax=vmax , rasterized=True)
+        ax[row, column].set_title(f"NSE {experiment.upper()}-{encoded_features_vec[ii]} minus {experiment.upper()}-{encoded_features_vec[ii-1]}", fontsize=LABEL_FONTSIZE, y=-0.2)
+        ax[row, column+1].set_ylabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii-1]}", fontsize=LABEL_FONTSIZE)
+        ax[row, column+1].set_xlabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii]}", fontsize=LABEL_FONTSIZE)
         ax[row, column+1].plot(line, line, c="black",ls="--")
-        sc = ax[row, column+1].scatter(np.clip(nse, 0,1), np.clip(nse_prev,0,1), c=color, s=100, cmap=cm.roma_r, vmin=vmin,vmax=vmax )
+        sc = ax[row, column+1].scatter(np.clip(nse, 0,1), np.clip(nse_prev,0,1), c=color, s=100, cmap=cm.roma_r, vmin=vmin,vmax=vmax , rasterized=True)
         cb = fig.colorbar(sc)
-        cb.set_label(f"Delta NSE", fontsize=25) 
+        cb.set_label(f"Delta NSE", fontsize=LABEL_FONTSIZE)
         #ax[row, column+1].text(-0.8,0.8, f"r = {np.round(pearsonr(nse, nse_prev)[0], 2)}", fontsize=30)
         ax[row, column+1].grid()
         
    
     fig.tight_layout()
-    fig.savefig(f"analysis/figures/delta_nse_previous_{experiment}_{eval_period}.png", dpi = 300)
+    fig.savefig(f"analysis/figures/delta_nse_previous_{experiment}_{eval_period}.pdf", dpi = 300, bbox_inches="tight", format="pdf")
     save_and_plot_delta_nse_distributions(delta_nse_by_pair, experiment, eval_period)
 
 
@@ -269,21 +260,21 @@ if __name__ == '__main__':
             [explanatory_variables.loc[selection.index], delta_nse.loc[selection.index].rename(pair_name)], axis=1
         )
         corr.loc[pair_name] = frame.corr("spearman").loc[pair_name, explanatory_names]
-    g = sns.heatmap(np.abs(corr), fmt='', cmap="viridis", vmin=0, vmax=1, ax=axs)
+    g = sns.heatmap(np.abs(corr), fmt='', cmap="viridis", vmin=0, vmax=1, ax=axs, rasterized=True)
     selected_delta.to_csv(f"analysis/delta_nse/delta_nse_{experiment}_top_improvement.csv")
     pd.concat(selected_basins).to_csv(f"analysis/delta_nse/delta_nse_{experiment}_selection.csv")
     xlabels = [clean_and_capitalize(attr) for attr in explanatory_names]
-    g.set_xlabel("Catchment attributes and hydrologic signatures", fontsize=25)
+    g.set_xlabel("Catchment attributes and hydrologic signatures", fontsize=LABEL_FONTSIZE)
     g.set_xticks(np.arange(len(xlabels)) + 0.5)
-    g.set_xticklabels(xlabels, rotation = 80, fontsize=15)
+    g.set_xticklabels(xlabels, rotation = 80, fontsize=TICK_FONTSIZE)
     for tick_label, label in zip(g.get_xticklabels(), xlabels):
         color = get_attr_text_color(label)
         if color is not None:
             tick_label.set_color(color)
     g.set_yticks(np.arange(len(corr.index)) + 0.5)
-    g.set_yticklabels(corr.index, rotation = 00, fontsize=15)
+    g.set_yticklabels(corr.index, rotation = 00, fontsize=TICK_FONTSIZE)
     fig.tight_layout()
-    fig.savefig(f"analysis/figures/Spearman_delta_nse_{experiment}_top_improvement.png", dpi=300)
+    fig.savefig(f"analysis/figures/Spearman_delta_nse_{experiment}_top_improvement.pdf", dpi=300, bbox_inches="tight", format="pdf")
     
     
     ### plot nse -N vs -A
@@ -340,17 +331,17 @@ if __name__ == '__main__':
             cmap=cm.roma_r,
             vmin=vmin,
             vmax=vmax
-        )
+        , rasterized=True)
 
         ax_map.set_title(
             f"NSE {experiment.upper()}-A minus {experiment.upper()}-{encoded_features_vec[ii]}",
-            fontsize=35,
+            fontsize=LABEL_FONTSIZE,
             y=-0.2
         )
 
         # plot scatter
-        ax_scatter.set_xlabel(f"NSE {experiment.upper()}-A", fontsize=35)
-        ax_scatter.set_ylabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii]}", fontsize=35)
+        ax_scatter.set_xlabel(f"NSE {experiment.upper()}-A", fontsize=LABEL_FONTSIZE)
+        ax_scatter.set_ylabel(f"NSE {experiment.upper()}-{encoded_features_vec[ii]}", fontsize=LABEL_FONTSIZE)
         ax_scatter.plot(line, line, c="black", ls="--")
 
         sc = ax_scatter.scatter(
@@ -361,15 +352,15 @@ if __name__ == '__main__':
             cmap=cm.roma_r,
             vmin=vmin,
             vmax=vmax
-        )
+        , rasterized=True)
 
         cb = fig.colorbar(sc, ax=ax_scatter)
-        cb.set_label(r"$\Delta$ NSE", fontsize=25)
+        cb.set_label(r"$\Delta$ NSE", fontsize=LABEL_FONTSIZE)
 
         ax_scatter.grid()
 
     fig.tight_layout()
     fig.savefig(
-        f"analysis/figures/delta_nse_attr_{experiment}_{eval_period}.png",
+        f"analysis/figures/delta_nse_attr_{experiment}_{eval_period}.pdf",
         dpi=300
-    )
+    , bbox_inches="tight", format="pdf")

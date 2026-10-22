@@ -1,7 +1,6 @@
 import argparse
 from pathlib import Path
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -23,11 +22,9 @@ from scripts.plot_encoded_feature_scatter import (
 from src.datautils import CLIM_ATTRS, GEOL_ATTRS, SOIL_ATTRS, TOPO_ATTRS, VEGE_ATTRS, load_attributes, load_signatures
 from src.utils import clean_and_capitalize, str2bool
 
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-plt.rcParams["font.serif"] = "Times New Roman"
-plt.rcParams["font.family"] = "serif"
-plt.rcParams["mathtext.fontset"] = "dejavuserif"
+from src.plot_style import configure_plot_style, LABEL_FONTSIZE, TICK_FONTSIZE
+
+configure_plot_style()
 
 DEFAULT_OUTPUT_DIR = Path("analysis/figures")
 DEFAULT_STATS_DIR = Path("analysis/stats")
@@ -124,8 +121,9 @@ def get_args():
     parser.add_argument(
         "--dpi",
         type=int,
+        choices=[300],
         default=300,
-        help="Output figure DPI.",
+        help="Output figure DPI (fixed at 300).",
     )
     parser.add_argument(
         "--output_dir",
@@ -424,7 +422,7 @@ def build_output_paths(
         f"encoded_attribute_signature_spearman_{model}_es{encoded_features}_"
         f"{selection_label}_{eval_period}"
     )
-    figure_path = output_dir / f"{stem}.png"
+    figure_path = output_dir / f"{stem}.pdf"
     corr_path = DEFAULT_STATS_DIR / f"{stem}.csv"
     stderr_path = DEFAULT_STATS_DIR / f"{stem}_stderr.csv"
     pvalue_path = DEFAULT_STATS_DIR / f"{stem}_pvalues.csv"
@@ -457,7 +455,7 @@ def add_group_sublabels(ax, n_rows: int, with_group_labels: bool = True) -> None
                 rotation=0,
                 ha="center",
                 va="bottom",
-                fontsize=15,
+                fontsize=LABEL_FONTSIZE,
                 fontweight="bold",
             )
         boundary += group_size
@@ -504,7 +502,7 @@ def build_annotation_data(
             elif stderr_value is None or np.isnan(stderr_value):
                 annot_data[row_idx, col_idx] = f"{value:.2f}"
             else:
-                annot_data[row_idx, col_idx] = f"{value:.2f} ± {stderr_value:.2f}"
+                annot_data[row_idx, col_idx] = f"{value:.2f} $\\pm$ {stderr_value:.2f}"
     return annot_data
 
 
@@ -519,7 +517,7 @@ def build_combined_output_path(
         f"encoded_attribute_signature_spearman_global_pub_es{cfg['encoded_features']}_"
         f"{global_selection_label}_{pub_selection_label}_{cfg['eval_period']}"
     )
-    return output_dir / f"{stem}.png"
+    return output_dir / f"{stem}.pdf"
 
 
 def plot_spearman_heatmap(
@@ -553,7 +551,7 @@ def plot_spearman_heatmap(
                 elif stderr_value is None or np.isnan(stderr_value):
                     annot_data[row_idx, col_idx] = f"{value:.2f}"
                 else:
-                    annot_data[row_idx, col_idx] = f"{value:.2f} ± {stderr_value:.2f}"
+                    annot_data[row_idx, col_idx] = f"{value:.2f} $\\pm$ {stderr_value:.2f}"
 
     cmap = cm.batlow if absolute else cm.vik
     vmin = 0.0 if absolute else -1.0
@@ -565,7 +563,7 @@ def plot_spearman_heatmap(
         "vmin": vmin,
         "vmax": vmax,
         "annot": annot_data,
-        "annot_kws": {"fontsize": 14.5, "rotation": 90, "ha": "center", "va": "center"},
+        "annot_kws": {"fontsize": LABEL_FONTSIZE, "rotation": 90, "ha": "center", "va": "center"},
         "fmt": "",
         "linewidths": 1,
         "linecolor": "#ffffff",
@@ -578,31 +576,31 @@ def plot_spearman_heatmap(
     if not absolute:
         heatmap_kwargs["center"] = 0.0
 
-    sns.heatmap(**heatmap_kwargs)
+    sns.heatmap(**heatmap_kwargs, rasterized=True)
     colorbar = ax.collections[0].colorbar
-    colorbar.ax.tick_params(labelsize=13)
+    colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
     colorbar.set_label(
         "Absolute Spearman correlation" if absolute else "Spearman correlation",
-        fontsize=16,
+        fontsize=LABEL_FONTSIZE,
     )
     add_group_sublabels(ax=ax, n_rows=plot_data.shape[0])
 
     title_prefix = "Absolute Spearman correlation" if absolute else "Spearman correlation"
     ax.set_xlabel("")
-    ax.set_ylabel("Latent features", fontsize=16)
+    ax.set_ylabel("Latent features", fontsize=LABEL_FONTSIZE)
     fig.suptitle(
         f"{model.upper()}-{encoded_features} latent features vs attributes and signatures",
-        fontsize=22,
+        fontsize=LABEL_FONTSIZE,
         y=0.96,
     )
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=15)
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=13)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=TICK_FONTSIZE)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=TICK_FONTSIZE)
     color_variable_ticklabels(ax)
 
     fig.subplots_adjust(left=0.10, right=0.98, top=0.82, bottom=0.28)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 
@@ -634,7 +632,7 @@ def plot_pub_split_heatmap(
                 if np.isnan(mean_value):
                     annot_data[row_idx, col_idx] = ""
                 else:
-                    annot_data[row_idx, col_idx] = f"{mean_value:.2f} ± {stderr_value:.2f}"
+                    annot_data[row_idx, col_idx] = f"{mean_value:.2f} $\\pm$ {stderr_value:.2f}"
 
     sns.heatmap(
         plot_data,
@@ -643,7 +641,7 @@ def plot_pub_split_heatmap(
         vmin=0.0,
         vmax=1.0,
         annot=annot_data,
-        annot_kws={"fontsize": 14.5, "rotation": 90, "ha": "center", "va": "center"},
+        annot_kws={"fontsize": LABEL_FONTSIZE, "rotation": 90, "ha": "center", "va": "center"},
         fmt="",
         linewidths=0.5,
         linecolor="#ffffff",
@@ -652,29 +650,30 @@ def plot_pub_split_heatmap(
             "fraction": 0.075,
             "pad": 0.02,
         },
+        rasterized=True,
     )
     colorbar = ax.collections[0].colorbar
-    colorbar.ax.tick_params(labelsize=13)
-    colorbar.set_label("Absolute Spearman correlation", fontsize=16)
+    colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
+    colorbar.set_label("Absolute Spearman correlation", fontsize=LABEL_FONTSIZE)
     add_group_sublabels(ax=ax, n_rows=plot_data.shape[0])
 
     selection_label = "with ICA" if with_ica else "stored latent features"
     if with_pca:
         selection_label = f"{selection_label}, common PCA basis"
     ax.set_xlabel("")
-    ax.set_ylabel("Latent features", fontsize=16)
+    ax.set_ylabel("Latent features", fontsize=LABEL_FONTSIZE)
     if run is None:
         title = f"PUB-{encoded_features} latent features vs attributes and signatures"
     else:
         title = f"PUB-{encoded_features} (run {run}) latent features vs attributes and signatures"
-    fig.suptitle(title, fontsize=22, y=0.96)
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=15)
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=13)
+    fig.suptitle(title, fontsize=LABEL_FONTSIZE, y=0.96)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=TICK_FONTSIZE)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=TICK_FONTSIZE)
     color_variable_ticklabels(ax)
 
     fig.subplots_adjust(left=0.10, right=0.98, top=0.82, bottom=0.28)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 
@@ -717,7 +716,7 @@ def plot_combined_spearman_heatmaps(
             "vmin": vmin,
             "vmax": vmax,
             "annot": annot_data,
-            "annot_kws": {"fontsize": 14.5, "rotation": 90, "ha": "center", "va": "center"},
+            "annot_kws": {"fontsize": LABEL_FONTSIZE, "rotation": 90, "ha": "center", "va": "center"},
             "fmt": "",
             "linewidths": 1,
             "linecolor": "#ffffff",
@@ -730,27 +729,27 @@ def plot_combined_spearman_heatmaps(
         if not absolute:
             heatmap_kwargs["center"] = 0.0
 
-        sns.heatmap(**heatmap_kwargs)
+        sns.heatmap(**heatmap_kwargs, rasterized=True)
         add_group_sublabels(
             ax=ax,
             n_rows=plot_data.shape[0],
             with_group_labels=(idx == 0),
         )
-        ax.set_ylabel(entry["model"].upper(), fontsize=18)
+        ax.set_ylabel(entry["model"].upper(), fontsize=LABEL_FONTSIZE)
         ax.set_xlabel("")
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=15)
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=TICK_FONTSIZE)
 
         if idx < len(entries) - 1:
             ax.tick_params(axis="x", labelbottom=False, bottom=False)
         else:
-            ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=18)
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=70, ha="right", fontsize=TICK_FONTSIZE)
             color_variable_ticklabels(ax)
 
     colorbar = axes[-1].collections[0].colorbar
-    colorbar.ax.tick_params(labelsize=15)
+    colorbar.ax.tick_params(labelsize=TICK_FONTSIZE)
     colorbar.set_label(
         "Absolute Spearman correlation" if absolute else "Spearman correlation",
-        fontsize=18,
+        fontsize=LABEL_FONTSIZE,
     )
 
     # fig.suptitle(
@@ -761,7 +760,7 @@ def plot_combined_spearman_heatmaps(
     #fig.supylabel("Latent features", fontsize=18, x=0.02)
     fig.subplots_adjust(left=0.10, right=0.90, top=0.87, bottom=0.22, hspace=0.10)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", format="pdf")
     plt.close(fig)
 
 
@@ -898,7 +897,7 @@ if __name__ == "__main__":
 
             if cfg["run"] is None:
                 df_mean, df_stderr = summarize_pub_split_correlations_across_runs(run_summaries)
-                figure_path = output_dir / f"{stem}.png"
+                figure_path = output_dir / f"{stem}.pdf"
                 mean_path = DEFAULT_STATS_DIR / f"{stem}.csv"
                 stderr_path = DEFAULT_STATS_DIR / f"{stem}_stderr.csv"
                 df_mean.to_csv(mean_path)
@@ -936,7 +935,7 @@ if __name__ == "__main__":
             else:
                 run = cfg["run"]
                 df_mean, df_std = run_summaries[run]
-                figure_path = output_dir / f"{stem}_run{run}.png"
+                figure_path = output_dir / f"{stem}_run{run}.pdf"
                 mean_path = DEFAULT_STATS_DIR / f"{stem}_run{run}_mean_abs.csv"
                 std_path = DEFAULT_STATS_DIR / f"{stem}_run{run}_std_abs.csv"
                 df_mean.to_csv(mean_path)
