@@ -7,7 +7,7 @@ Code and intermediate results for the manuscript by Alberto Bassi, Fabrizio Feni
 
 Entity-aware LSTMs use static catchment attributes together with meteorological forcings to predict streamflow, in gauged and in ungauged basins. We ask how much of the information in the 26 commonly used CAMELS-US attributes the LSTM actually needs once it already sees the weather.
 
-<p align="center"><img src="model.pdf" width="650" alt="Encoder-based entity-aware LSTM"></p>
+<p align="center"><img src="model.png" width="650" alt="Encoder-based entity-aware LSTM"></p>
 
 The 26 attributes pass through an MLP encoder that compresses them into **N latent features**. The LSTM sees only these features plus 15 forcing time series: precipitation, solar radiation, Tmax, Tmin and vapour pressure from Daymet, Maurer and extended NLDAS. Because the encoder is trained together with the forcing-driven LSTM, it is pushed to keep the attribute information that complements the weather. Varying N shows how many dimensions that information really occupies.
 
