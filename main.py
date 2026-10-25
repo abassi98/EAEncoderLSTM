@@ -203,7 +203,7 @@ def _setup_run(cfg: Dict) -> Dict:
   
     if cfg["run_dir"] is None:
         # initialise wandb runs
-        wandb.init(name=cfg["name"],  project="Attention4Hydro", dir=f"runs/")
+        wandb.init(name=cfg["name"],  project="EAEncoderLSTM", dir=f"runs/")
         cfg['run_dir'] = Path(__file__).absolute().parent / wandb.run.dir
     else:
         cfg['run_dir'] = Path(cfg['run_dir'])
