@@ -1,5 +1,22 @@
 #!/bin/bash
+
+#SBATCH --job-name=ae_forcing
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=6
+#SBATCH --cpus-per-task=4
+#SBATCH --time=02-00:00:00
+#SBATCH --partition=earth-4
+#SBATCH --constraint=rhel8
+#SBATCH --gres=gpu:l40s:1
+#SBATCH --mem=100GB
+#SBATCH --mail-type=BEGIN
+#SBATCH --mail-type=END,FAIL     
+#SBATCH --output=gpu_global.out
+#SBATCH --error=gpu_global.err
+
+module load gcc/9.4.0-pe5.34 miniconda3/4.12.0 lsfm-init-miniconda/1.0.0	# comment to run on your machine
 conda activate ea-encoder-lstm
+wandb online
 
 encoded_features=$1
 init_run=$2

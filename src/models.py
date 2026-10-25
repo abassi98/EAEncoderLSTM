@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 import torch.nn.functional as F
 import torch.nn as nn
 import torch.optim as optim
-from src.utils import AdaptiveScheduler, NSELoss, sample, nKLDivLoss
+from src.utils import AdaptiveScheduler, NSELoss
 
 
 class MLP(nn.Module):
