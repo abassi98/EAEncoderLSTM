@@ -4,7 +4,7 @@ import matplotlib as mpl
 
 LABEL_FONTSIZE = 18
 TICK_FONTSIZE = 12
-LEGEND_FONTSIZE = 10
+LEGEND_FONTSIZE = 20
 
 
 def configure_plot_style(*, euler_math=False):
