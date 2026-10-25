@@ -139,14 +139,6 @@ def get_args() -> Dict:
         default="test",
         choices=["val", "test"]
     )   
-    parser.add_argument(
-        "--random_features",
-        action="store_true",
-        help=(
-            "During evaluation, replace encoder outputs fed to the LSTM decoder "
-            "with one basin-constant standard-normal random feature vector."
-        ),
-    )
 
     parser.add_argument(
         '--basin_file',
@@ -181,9 +173,6 @@ def get_args() -> Dict:
 
     if (cfg["mode"] in ["evaluate"]) and (cfg["run_dir"] is None):
         raise ValueError("In evaluation mode a run directory (--run_dir) has to be specified")
-    if cfg["random_features"] and cfg["mode"] != "evaluate":
-        raise ValueError("--random_features is only supported in evaluate mode.")
-
    
     global DEVICE
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -422,14 +411,6 @@ def evaluate(user_cfg: Dict):
     with open(Path(user_cfg["run_dir"]) / 'cfg.json', 'r') as fp:
         run_cfg = json.load(fp)
 
-    if user_cfg["random_features"] and not run_cfg["encoded_space_dim"]:
-        raise ValueError("--random_features requires a model with encoded_space_dim > 0.")
-    if user_cfg["random_features"]:
-        evaluation_seed = user_cfg["seed"] if user_cfg["seed"] is not None else run_cfg["seed"]
-        torch.manual_seed(evaluation_seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(evaluation_seed)
-
     # get basins
     if user_cfg["split_file"] is not None:
         with Path(user_cfg["split_file"]).open('rb') as fp:
@@ -498,15 +479,7 @@ def evaluate(user_cfg: Dict):
         
         loader = DataLoader(ds_test, batch_size=1024, shuffle=False, num_workers=user_cfg["num_workers"])
 
-        basin_random_features = None
-        if user_cfg["random_features"]:
-            basin_random_features = torch.randn(
-                run_cfg["encoded_space_dim"], device=DEVICE
-            )
-
-        preds, obs, enc, hidden, cell = evaluate_basin(
-            model, loader, random_features=basin_random_features
-        )
+        preds, obs, enc, hidden, cell = evaluate_basin(model, loader)
         df = pd.DataFrame(data={'qobs': obs.flatten(), f'qsim_{run_cfg["seed"]}': preds.flatten()}, index=date_range)
         df.attrs[f"enc_{run_cfg['seed']}"] = enc
         
@@ -518,17 +491,16 @@ def evaluate(user_cfg: Dict):
     _store_results(user_cfg, run_cfg, results)
 
     # save hidden and cell states
-    output_suffix = "_random_features" if user_cfg["random_features"] else ""
-    file_name = Path(user_cfg["run_dir"]) / f"hidden_{run_cfg['seed']}_{user_cfg['eval_period']}{output_suffix}.p"
+    file_name = Path(user_cfg["run_dir"]) / f"hidden_{run_cfg['seed']}_{user_cfg['eval_period']}.p"
     with (file_name).open('wb') as fp:
         pickle.dump(results_hidden, fp)
 
-    file_name = Path(user_cfg["run_dir"]) / f"cell_{run_cfg['seed']}_{user_cfg['eval_period']}{output_suffix}.p"
+    file_name = Path(user_cfg["run_dir"]) / f"cell_{run_cfg['seed']}_{user_cfg['eval_period']}.p"
     with (file_name).open('wb') as fp:
         pickle.dump(results_cell, fp)
 
 def evaluate_basin(
-    model: nn.Module, loader: DataLoader, random_features: torch.Tensor | None = None
+    model: nn.Module, loader: DataLoader
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Evaluate model on a single basin
 
@@ -543,10 +515,6 @@ def evaluate_basin(
     -------
     preds : np.ndarray
         Array containing the (rescaled) network prediction for the entire data period
-    random_features : torch.Tensor, optional
-        One encoded feature vector for the basin, reused for every evaluation
-        window. If omitted, use the model's learned encoder.
-
     obs : np.ndarray
         Array containing the observed discharge for the entire data period
 
@@ -560,7 +528,7 @@ def evaluate_basin(
         for data in loader:
             x, y, attr = data
             x, y, attr = x.to(DEVICE), y.to(DEVICE), attr.to(DEVICE)
-            enc, p, r = model(x, attr.squeeze(), random_features=random_features)
+            enc, p, r = model(x, attr.squeeze())
             h, c = r
             #print(enc)
 
@@ -603,8 +571,7 @@ def _store_results(user_cfg: Dict, run_cfg: Dict, results: pd.DataFrame):
 
     """
     # save time series
-    output_suffix = "_random_features" if user_cfg["random_features"] else ""
-    file_name = Path(user_cfg["run_dir"]) / f"lstm_{run_cfg['seed']}_{user_cfg['eval_period']}{output_suffix}.p"
+    file_name = Path(user_cfg["run_dir"]) / f"lstm_{run_cfg['seed']}_{user_cfg['eval_period']}.p"
     with (file_name).open('wb') as fp:
         pickle.dump(results, fp)
 
