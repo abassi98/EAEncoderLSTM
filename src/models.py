@@ -39,35 +39,23 @@ class MLP(nn.Module):
         self.out_bn = nn.BatchNorm1d(self.output_dim)
         # initialize weights
         self._initialize_weights()
-
         print("MLP initialized")
-        # for e, layer in enumerate(self.layers):
-        #     print(f"Weight/bias layer {e}", layer.weight,layer.bias)
-
-        # print(f"Weight/bias out layer", self.out.weight,self.out.bias)
-
+      
     def _initialize_weights(self):
         for layer in self.layers:
             nn.init.kaiming_normal_(layer.weight, a=0.01, mode='fan_in', nonlinearity='leaky_relu')
             #torch.nn.init.normal_(layer.weight, mean=0,std=1e-4)
             torch.nn.init.normal_(layer.bias, mean=0.0, std=1e-4)
 
-        # set first hidden layer out to be the identities
-        #nn.init.eye_(self.layers[0].weight)
-        #self.layers[0].weight = nn.Parameter(self.layers[0].weight.add(torch.randn_like(self.layers[0].weight)*1e-4))
-        #nn.init.eye_(self.out.weight)
-        #self.out.weight = nn.Parameter(self.out.weight.add(torch.randn_like(self.out.weight)*1e-4))
         nn.init.kaiming_normal_(self.out.weight, mode='fan_in', nonlinearity='linear')
         torch.nn.init.normal_(self.out.bias, mean=0.0, std=1e-4)
 
     def forward(self, x):
-        # comment first act and batch norm layers in enca_26 for runs 4,5
         # pass first layer
         x = self.layers[0](x)
         x = self.act(x)
         x = self.batch_norms[0](x)
         x = self.dropout(x)
-        #print(torch.mean(x, dim=0),torch.std(x, dim=0) )
         
         # pass the network
         for i in range(1,len(self.layers)):
@@ -76,7 +64,6 @@ class MLP(nn.Module):
             x = self.batch_norms[i](x)
             x = self.act(x)
             x = self.dropout(x)
-            #print(torch.mean(x, dim=0),torch.std(x, dim=0) )
             x = (x + residual) / torch.sqrt(torch.tensor(2.0, device=x.device))
         
         x = self.out(x)
@@ -103,12 +90,8 @@ class MLP_Linear(nn.Module):
         
         # initialize weights
         self._initialize_weights()
-
         print("MLP initialized")
-        # for e, layer in enumerate(self.layers):
-        #     print(f"Weight/bias layer {e}", layer.weight,layer.bias)
 
-        # print(f"Weight/bias out layer", self.out.weight,self.out.bias)
 
     def _initialize_weights(self):
         nn.init.kaiming_normal_(self.out.weight, mode='fan_in', nonlinearity='linear')

@@ -355,29 +355,6 @@ def clean_and_capitalize(input_string):
     return out
 
 
-### Varitaional Autoencoder Functions
-def sample(mean, logvar):
-    """
-    Sample according to a standard Gaussian with mean = 0 and std = 1 and
-    implement reparametrization trick.
-    --------
-    Returns:
-    Torch tensor 
-    """
-    randn = torch.randn_like(logvar)
-    return mean + randn * torch.exp(0.5*logvar)
-
-
-class nKLDivLoss(nn.Module):
-    """
-    Compute Kulback-Libler divergence loss for a gaussian variational autoencoder
-    """
-    def __init__(self,):
-        super(nKLDivLoss, self).__init__()
-        
-    def forward(self,  mean, logvar):
-        return torch.mean(0.5*torch.sum(torch.exp(logvar) + mean**2 - 1 - logvar, dim=1), dim = 0)
-
 
 def give_report_file(encoded_features, leftout , experiment, run):
     if leftout != "none":
