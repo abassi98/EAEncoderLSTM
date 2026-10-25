@@ -95,6 +95,35 @@ python -m scripts.compute_encoder_gradients --experiment global --encoded_featur
 
 Replace `global` with `pub` for the PUB models. Step 4 writes the comparison table to `analysis/bootstrap/comparisons_alpha0.05/comparison_table.tex`.
 
+### Adding forcing summary statistics to the decoder
+
+Pass `--forcing_summary` to append the 30 basin-specific values from
+`analysis/encoded_features/forcing_summary.pkl` to the LSTM inputs at every time
+step, alongside the 15 forcings and N encoded attributes. The encoder still
+receives only the 26 attributes. With N=0 the decoder receives forcings and
+summary statistics; with N=None it also receives all 26 attributes directly.
+The pickle is loaded as-is (means and standard deviations of normalized
+forcings), without recomputing statistics or rebuilding existing HDF5 datasets.
+The supplied file was computed over the test period by
+`scripts/compute_forcing_summary.py`.
+
+```sh
+bash train_global.sh 2 0 4 --forcing_summary
+bash train_pub.sh    2 0 4 12 0 --forcing_summary
+
+# Evaluation automatically restores the option from each run's cfg.json.
+bash run_analysis_global.sh ae_forcing 2 test 4 0
+bash run_analysis_pub.sh    ae_forcing 2 test 4 0 12 0
+python -m scripts.main_performance global_ae_forcing 2 test
+python -m scripts.main_performance pub_ae_forcing 2 test
+```
+
+These runs use separate `ae_forcing` report and ensemble filenames. Omitting the
+flag preserves the existing workflow. For a single run, use
+`python main.py train --encoded_space_dim 2 --forcing_summary`; optionally set
+`--forcing_summary_file PATH` to use another precomputed pickle. The path is
+saved in the run configuration for evaluation.
+
 ## Reproducing the figures
 
 All commands run from the repository root, using the intermediate results in `analysis/`. Figures are written to `analysis/figures/`, except Figs. D1-D4, which go to `analysis/bootstrap/comparisons_alpha0.05/maps/`.

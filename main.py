@@ -108,6 +108,11 @@ def get_args() -> Dict:
         help="Path to validation .h5 file.")
     
     parser.add_argument('--seed', type=int, required=False, help="Random seed")
+    parser.add_argument('--forcing_summary', action='store_true',
+                        help="Append 30 precomputed forcing statistics to decoder inputs.")
+    parser.add_argument('--forcing_summary_file', type=str,
+                        default='analysis/encoded_features/forcing_summary.pkl',
+                        help="Pickle mapping basin IDs to 30 forcing statistics.")
 
     parser.add_argument('--run_dir', type=str, default=None, help="Path to run directory.")
 
@@ -285,6 +290,22 @@ def _prepare_data(cfg: Dict, train_basins: List, val_basins: List = None) -> Dic
 # Train or evaluate model #
 ###########################
 
+def load_forcing_summary(cfg, basins):
+    """Load existing, already normalized forcing statistics without recomputing them."""
+    if not cfg.get('forcing_summary', False):
+        return None
+    with Path(cfg['forcing_summary_file']).open('rb') as fp:
+        summary = pickle.load(fp)
+    for basin in basins:
+        if basin not in summary:
+            raise ValueError(f"Missing forcing summary for basin {basin}")
+        values = np.asarray(summary[basin], dtype=np.float32)
+        if values.shape != (30,) or not np.isfinite(values).all():
+            raise ValueError(f"Forcing summary for basin {basin} must contain 30 finite values")
+        summary[basin] = values
+    return summary
+
+
 def train(cfg):
     """Train model.
 
@@ -308,6 +329,8 @@ def train(cfg):
         basins = get_basin_list()
         val_basins = get_basin_list()
 
+    forcing_summary = load_forcing_summary(cfg, set(basins) | set(val_basins))
+
     # create folder structure for this run"
     cfg = _setup_run(cfg)
     cfg = _prepare_data(cfg, basins, val_basins=val_basins) 
@@ -326,12 +349,12 @@ def train(cfg):
     ds = CamelsH5(
         h5_file=train_file,
         basins=basins,
-        db_path=cfg["db_path"])
+        db_path=cfg["db_path"], forcing_summary=forcing_summary)
 
     ds_val = CamelsH5(
             h5_file=val_file,
             basins=val_basins,
-            db_path=cfg["db_path"])
+            db_path=cfg["db_path"], forcing_summary=forcing_summary)
     
     print("Attributes normalized", ds.df)
     
@@ -351,6 +374,7 @@ def train(cfg):
                  seq_length = cfg["seq_length"],
                  lr = cfg["learning_rate"],
                  milestones = milestones,
+                 forcing_summary_dim = 30 if cfg.get('forcing_summary', False) else 0,
                  )
     
     
@@ -415,6 +439,7 @@ def evaluate(user_cfg: Dict):
         basins = get_basin_list()
 
     input_dim = 26 
+    forcing_summary = load_forcing_summary(run_cfg, basins)
 
   
     # get attribute means/stds from trainings dataset
@@ -438,6 +463,7 @@ def evaluate(user_cfg: Dict):
                  drop_p = run_cfg["dropout"], 
                  seq_length = run_cfg["seq_length"],
                  lr = run_cfg["learning_rate"],
+                 forcing_summary_dim = 30 if run_cfg.get('forcing_summary', False) else 0,
                  )
   
     weight_file =  glob.glob(f"{user_cfg['run_dir']}/last.ckpt")[0]
@@ -465,7 +491,8 @@ def evaluate(user_cfg: Dict):
             with_attributes=True,
             attribute_means=means,
             attribute_stds=stds,
-            db_path=db_path
+            db_path=db_path,
+            forcing_summary=forcing_summary,
             )
 
         

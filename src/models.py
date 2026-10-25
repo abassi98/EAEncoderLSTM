@@ -136,6 +136,7 @@ class Hydro_Attention(pl.LightningModule):
                  lr = 1e-5,
                  weight_decay = 0.0,
                  milestones = {0 : 1e-3},
+                 forcing_summary_dim = 0,
                 ):
           
         
@@ -145,6 +146,7 @@ class Hydro_Attention(pl.LightningModule):
         # Parameters
         self.input_dim = input_dim
         self.output_dim = output_dim
+        self.forcing_summary_dim = forcing_summary_dim
         self.lr = lr
         self.weight_decay = weight_decay
         self.milestones = milestones
@@ -157,7 +159,7 @@ class Hydro_Attention(pl.LightningModule):
           
         ### LSTM decoder
         if self.output_dim == None: # 15 forcing + input_dim attributes
-            self.lstm = nn.LSTM(input_size= 15 + self.input_dim, 
+            self.lstm = nn.LSTM(input_size= 15 + self.input_dim + forcing_summary_dim,
                            hidden_size=self.lstm_hidden_units,
                            num_layers=1,
                            batch_first=True,
@@ -169,7 +171,7 @@ class Hydro_Attention(pl.LightningModule):
                 else:
                     self.encoder = MLP(input_dim, output_dim, hidden_layers, act, drop_p)
         
-            self.lstm = nn.LSTM(input_size= 15 + self.output_dim, 
+            self.lstm = nn.LSTM(input_size= 15 + self.output_dim + forcing_summary_dim,
                            hidden_size=self.lstm_hidden_units,
                            num_layers=1,
                            batch_first=True,
@@ -192,6 +194,13 @@ class Hydro_Attention(pl.LightningModule):
 
 
     def forward(self, x, attr, random_features=None):
+        attr = attr.reshape(x.shape[0], -1)
+        if self.forcing_summary_dim:
+            summary = attr[:, self.input_dim:]
+            if summary.shape[1] != self.forcing_summary_dim:
+                raise ValueError("Expected forcing summary appended to basin attributes")
+            attr = attr[:, :self.input_dim]
+            x = torch.cat((x, summary.unsqueeze(1).expand(-1, x.shape[1], -1)), dim=-1)
         enc = None
         if self.output_dim == None:
             attr_expanded = attr.unsqueeze(1).expand(-1, self.seq_length, -1) # expand dimension

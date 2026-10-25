@@ -53,7 +53,8 @@ class CamelsTXT(Dataset):
                  db_path: str = None,
                  attr_left_out: List = [],
                  forcings: list = ["daymet", "maurer_extended", "nldas_extended"],
-                 reshape_data: bool = True):
+                 reshape_data: bool = True,
+                 forcing_summary: dict = None):
         
         self.camels_root = camels_root
         self.basin = basin
@@ -86,6 +87,9 @@ class CamelsTXT(Dataset):
 
         if self.with_attributes:
             self.attributes = self._load_attributes()
+            if forcing_summary is not None:
+                summary = torch.as_tensor(forcing_summary[self.basin], dtype=torch.float32)
+                self.attributes = torch.cat((self.attributes, summary.unsqueeze(0)), dim=-1)
 
         self.num_samples = self.x.shape[0]
 
@@ -192,11 +196,13 @@ class CamelsH5(Dataset):
                  h5_file: PosixPath,
                  basins: List,
                  db_path: str,
-                 attr_left_out: List = [],):
+                 attr_left_out: List = [],
+                 forcing_summary: dict = None):
         self.h5_file = h5_file
         self.basins = basins
         self.db_path = db_path
         self.attr_left_out = attr_left_out # list of static attributes to leave out
+        self.forcing_summary = forcing_summary
 
         # Placeholder for catchment attributes stats
         self.df = None
@@ -226,6 +232,9 @@ class CamelsH5(Dataset):
         # get attributes from data frame and create 2d array with copies
         attributes = self.df.loc[self.df.index == basin].values
         attributes = torch.from_numpy(attributes.astype(np.float32))
+        if self.forcing_summary is not None:
+            summary = torch.as_tensor(self.forcing_summary[basin], dtype=torch.float32)
+            attributes = torch.cat((attributes, summary.unsqueeze(0)), dim=-1)
 
         # convert to torch tensors
         x = torch.from_numpy(x.astype(np.float32))
