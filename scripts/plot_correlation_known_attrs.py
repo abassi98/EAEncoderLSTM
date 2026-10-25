@@ -41,6 +41,7 @@ def plot():
     g.set_xticklabels(g.get_xticklabels(), rotation = 90, fontsize=TICK_FONTSIZE)
     g.set_yticklabels(g.get_yticklabels(), rotation = 0, fontsize=TICK_FONTSIZE)
 
+    
     # labels YAXIS
     fig.text(0.002, 0.85, "Climate", fontsize=LABEL_FONTSIZE, rotation="vertical")
     fig.text(0.002, 0.60, "Hydro. Signatures", fontsize=LABEL_FONTSIZE, rotation="vertical")

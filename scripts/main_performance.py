@@ -21,7 +21,6 @@ def get_args():
     parser.add_argument("experiment", help="global, pub, global_linear or pub_linear")
     parser.add_argument("encoded_features")
     parser.add_argument("eval_period", choices=["val", "test"])
-    parser.add_argument("--random_features", action="store_true")
     parser.add_argument("--camels-root", type=Path, default=Path("../Datasets/CAMELS-US"))
     parser.add_argument("--workers", type=int, default=1, help="Parallel basin workers (default: 1).")
     parser.add_argument(
@@ -153,15 +152,15 @@ def compute_performance(ens_dict, camels_root=Path("../Datasets/CAMELS-US"),
 
 def main():
     args = get_args()
-    suffix = "_random_features" if args.random_features else ""
+
     experiment = args.experiment
     stem = f"{experiment}_es{args.encoded_features}"
-    input_path = Path("analysis/results_data") / f"{stem}_{args.eval_period}{suffix}.pkl"
+    input_path = Path("analysis/results_data") / f"{stem}_{args.eval_period}.pkl"
     with input_path.open("rb") as handle:
         ens_dict = pickle.load(handle)
     stats, signatures = compute_performance(ens_dict, args.camels_root, args.warmup_days, args.workers)
     for directory, table in (("stats", stats), ("signatures", signatures)):
-        output_path = Path("analysis") / directory / args.eval_period / f"{stem}{suffix}.csv"
+        output_path = Path("analysis") / directory / args.eval_period / f"{stem}.csv"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         table.to_csv(output_path)
         print(f"Saved {output_path}")

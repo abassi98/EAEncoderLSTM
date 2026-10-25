@@ -22,7 +22,6 @@ def get_args():
     parser.add_argument("experiment")
     parser.add_argument("encoded_features")
     parser.add_argument("eval_period", choices=["val", "test"])
-    parser.add_argument("--random_features", action="store_true")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--n-bootstrap", "--n_bootstrap", type=int, default=5000)
     parser.add_argument(
@@ -242,9 +241,9 @@ def compute_bootstrap(data, samples):
 
 def main():
     args = get_args()
-    suffix = "_random_features" if args.random_features else ""
+
     input_path = Path(
-        f"analysis/results_data/{args.experiment}_es{args.encoded_features}_{args.eval_period}{suffix}.pkl"
+        f"analysis/results_data/{args.experiment}_es{args.encoded_features}_{args.eval_period}.pkl"
     )
     with input_path.open("rb") as handle:
         ens_dict = pickle.load(handle)
@@ -261,7 +260,7 @@ def main():
     nse_dict = compute_bootstrap(data, samples)
     method_suffix = "" if args.block_method == "hydrological_year" else "_sliding365"
     output_path = Path(
-        f"analysis/bootstrap/nse_{args.experiment}_{args.encoded_features}_{args.eval_period}{method_suffix}{suffix}.pkl"
+        f"analysis/bootstrap/nse_{args.experiment}_{args.encoded_features}_{args.eval_period}{method_suffix}.pkl"
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("wb") as handle:

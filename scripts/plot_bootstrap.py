@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from src.plot_utils import (
     get_bootstrap_plot_models,
-    get_bootstrap_random_feature_model_ids,
 )
 from pathlib import PosixPath
 import pickle
@@ -54,13 +53,6 @@ def get_args():
         type=float,
         default=1.0,
     )
-    parser.add_argument(
-        "--random_features_models",
-        nargs="*",
-        default=(),
-        choices=get_bootstrap_random_feature_model_ids(),
-        help="Random-feature bootstrap models to include (default: none).",
-    )
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument(
         "--restart_envelope",
@@ -97,9 +89,7 @@ if __name__ == '__main__':
     
     # Statistics distributions
     palette = {}
-    model_specs = get_bootstrap_plot_models(
-        random_feature_models=tuple(cfg["random_features_models"])
-    )
+    model_specs = get_bootstrap_plot_models()
 
     restart_inputs = {}
     if cfg["leave_one_out"]:
@@ -142,23 +132,15 @@ if __name__ == '__main__':
         for spec in model_specs:
             experiment = spec["file_experiment"]
             ef = spec["encoded_features"]
-            output_suffix = "_random_features" if spec["random_features"] else ""
             fname = (
-                f"analysis/bootstrap/restarts_{metric}_{experiment}_{ef}_{eval_period}"
-                f"{output_suffix}.pkl"
+                f"analysis/bootstrap/restarts_{metric}_{experiment}_{ef}_{eval_period}.pkl"
             )
 
-            try:
-                with open(fname, "rb") as f:
-                    bootstrap_inputs[spec["label"]] = {
-                        "spec": spec,
-                        "data": pickle.load(f),
-                    }
-            except FileNotFoundError:
-                if spec["random_features"]:
-                    warnings.warn(f"Skipping missing random-features bootstrap file: {fname}")
-                    continue
-                raise
+            with open(fname, "rb") as f:
+                bootstrap_inputs[spec["label"]] = {
+                    "spec": spec,
+                    "data": pickle.load(f),
+                }
 
         common_basins = set(basins)
         for bootstrap_entry in bootstrap_inputs.values():
@@ -423,8 +405,6 @@ if __name__ == '__main__':
     output_suffix = "_restart_envelope" if cfg["restart_envelope"] else ""
     if cfg["leave_one_out"]:
         output_suffix = "_leave_one_out"
-    if cfg["random_features_models"]:
-        output_suffix += "_with_random_features"
     output_path = PosixPath(
         f"analysis/figures/bootstrap_{metric}_cumulative_{cfg['eval_period']}{output_suffix}.pdf"
     )

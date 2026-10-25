@@ -313,7 +313,7 @@ def generate_maps(comparison_dir, output_dir, eval_period=None, attributes_db=RO
 def main():
     args = get_args()
     try:
-        output_dir = args.output_dir if args.output_dir is not None else args.comparison_dir / "maps"
+        output_dir = args.output_dir if args.output_dir is not None else "analysis/figures/"
         generate_maps(args.comparison_dir, output_dir, args.eval_period, args.attributes_db,
                       allow_missing=not args.strict, alphas=args.alphas, evidence_maps=args.evidence_maps)
     except (ValueError, OSError) as error:

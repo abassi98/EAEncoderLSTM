@@ -105,12 +105,12 @@ def discover_models(directory, eval_period="test", block_method="sliding", specs
     for features in extra_global_features:
         if not any(spec["family"] == "global" and spec["encoded_features"] == features for spec in specs):
             specs.append({"family": "global", "file_experiment": "global", "encoded_features": features,
-                          "random_features": False, "label": f"GLOBAL-{features}"})
+                          "label": f"GLOBAL-{features}"})
     suffix = "_sliding365" if block_method == "sliding" else ""
     discovered, skipped = {}, []
     for family in ("pub", "global"):
         ordered = sorted(
-            (spec for spec in specs if spec["family"] == family and not spec["random_features"]),
+            (spec for spec in specs if spec["family"] == family),
             key=lambda spec: float("inf") if spec["encoded_features"] is None else spec["encoded_features"],
         )
         for spec in ordered:

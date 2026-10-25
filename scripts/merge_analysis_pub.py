@@ -16,7 +16,6 @@ def get_args():
     parser.add_argument("eval_period", choices=["val", "test"])
     parser.add_argument("nruns", type=int)
     parser.add_argument("nsplits", type=int)
-    parser.add_argument("--random_features", action="store_true")
     return parser.parse_args()
 
 # number of ensemble members
@@ -26,7 +25,7 @@ encoded_features = args.encoded_features
 eval_period = args.eval_period
 nruns = args.nruns
 nsplits = args.nsplits
-output_suffix = "_random_features" if args.random_features else ""
+
 
 ens_dict = {}
 
@@ -46,7 +45,7 @@ for run in range(nruns):
         # grab the test output file for this split
         #results_file = glob.glob(str(Path(run_dir) / f"lstm*.p"))[0]
         print(seed, split, run_dir)
-        results_file = glob.glob(str(Path(run_dir) / f"lstm*{eval_period}{output_suffix}.p"))[0]
+        results_file = glob.glob(str(Path(run_dir) / f"lstm*{eval_period}.p"))[0]
         print("result_file", results_file)
         with open(results_file, 'rb') as g:
             split_dict = pickle.load(g)
@@ -86,7 +85,7 @@ for basin in ens_dict:
 # The report tag "ae" marks the encoder models, saved under the bare family name
 # (pub_es*); other tags such as "linear" are kept (pub_linear_es*).
 model_name = "pub" if experiment == "ae" else f"pub_{experiment}"
-fname = f"analysis/results_data/{model_name}_es{encoded_features}_{eval_period}{output_suffix}.pkl"
+fname = f"analysis/results_data/{model_name}_es{encoded_features}_{eval_period}.pkl"
 
 with open(fname, 'wb') as f:
     pickle.dump(ens_dict, f, protocol=pickle.HIGHEST_PROTOCOL)

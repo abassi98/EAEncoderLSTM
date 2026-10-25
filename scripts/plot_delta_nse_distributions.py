@@ -92,7 +92,8 @@ def plot_distributions(ax, delta_nse_long, transitions, title, y_limit):
     ax.set_ylim(-y_limit, y_limit)
     ax.grid(axis="y", alpha=0.3)
     ax.set_title(title, fontsize=LABEL_FONTSIZE)
-    
+    ax.set_ylabel("")
+    ax.set_xlabel("")
     ax.tick_params(axis="x", rotation=15, labelsize=TICK_FONTSIZE)
 
     y_text = y_limit * 0.92

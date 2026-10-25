@@ -1,7 +1,6 @@
 
 import argparse
 import pickle
-import warnings
 from pathlib import Path
 
 import numpy as np
@@ -16,7 +15,6 @@ def get_args():
     parser.add_argument("encoded_features")
     parser.add_argument("eval_period", choices=["val", "test"])
     parser.add_argument("metric", choices=METRIC_NAMES)
-    parser.add_argument("--random_features", action="store_true")
     return parser.parse_args()
 
 
@@ -73,14 +71,11 @@ def load_leave_one_out(model_specs, eval_period, metric, directory=Path("analysi
     inputs = {}
     for spec in model_specs:
         experiment = spec["file_experiment"]
-        suffix = "_random_features" if spec["random_features"] else ""
+
         path = directory / (
-            f"leave_one_out_{metric}_{experiment}_{spec['encoded_features']}_{eval_period}{suffix}.csv"
+            f"leave_one_out_{metric}_{experiment}_{spec['encoded_features']}_{eval_period}.csv"
         )
         if not path.is_file():
-            if spec["random_features"]:
-                warnings.warn(f"Skipping missing random-features leave-one-out file: {path}")
-                continue
             raise FileNotFoundError(
                 f"Missing {path}. Generate it with: python -m scripts.compute_leave_one_out "
                 f"{experiment} {spec['encoded_features']} {eval_period} {metric}"
@@ -103,9 +98,9 @@ def load_leave_one_out(model_specs, eval_period, metric, directory=Path("analysi
 
 def main():
     args = get_args()
-    suffix = "_random_features" if args.random_features else ""
+
     input_path = Path("analysis/results_data") / (
-        f"{args.experiment}_es{args.encoded_features}_{args.eval_period}{suffix}.pkl"
+        f"{args.experiment}_es{args.encoded_features}_{args.eval_period}.pkl"
     )
     with input_path.open("rb") as handle:
         ens_dict = pickle.load(handle)
@@ -115,7 +110,7 @@ def main():
     # for the random bootstrap replicates saved by the previous script.
     output_path = Path("analysis/bootstrap") / (
         f"leave_one_out_{args.metric}_{args.experiment}_{args.encoded_features}_"
-        f"{args.eval_period}{suffix}.csv"
+        f"{args.eval_period}.csv"
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     scores.to_csv(output_path)
