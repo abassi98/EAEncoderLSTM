@@ -193,7 +193,7 @@ class Hydro_Attention(pl.LightningModule):
             self.lstm.bias_hh_l0.data[self.lstm_hidden_units:2 * self.lstm_hidden_units] = self.initial_forget_bias
 
 
-    def forward(self, x, attr, random_features=None):
+    def forward(self, x, attr):
         attr = attr.reshape(x.shape[0], -1)
         if self.forcing_summary_dim:
             summary = attr[:, self.input_dim:]
@@ -207,17 +207,7 @@ class Hydro_Attention(pl.LightningModule):
             x = torch.cat((x, attr_expanded),dim=-1) # concat data
 
         elif self.output_dim > 0:
-            if random_features is not None:
-                if random_features.shape != (self.output_dim,):
-                    raise ValueError(
-                        "random_features must have shape "
-                        f"({self.output_dim},), got {tuple(random_features.shape)}"
-                    )
-                # Static attributes must remain constant across all windows in a basin.
-                enc = random_features.to(device=attr.device, dtype=attr.dtype)
-                enc = enc.unsqueeze(0).expand(attr.shape[0], -1)
-            else:
-                enc = self.encoder(attr) # shape (batch_size, output_dim)
+            enc = self.encoder(attr) # shape (batch_size, output_dim)
             enc_expanded = enc.unsqueeze(1).expand(-1, self.seq_length, -1) # expand dimension
             x = torch.cat((x, enc_expanded),dim=-1) # concat data
         

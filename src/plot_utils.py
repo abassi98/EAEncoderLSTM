@@ -158,18 +158,6 @@ cmodels = {
 }
 
 
-BOOTSTRAP_RANDOM_FEATURE_MODELS = (
-    {
-        "id": "global_ae_2",
-        "family": "global",
-        "file_experiment": "global",
-        "encoded_features": 2,
-        "color": "#6f4bf2",
-        "label": "GLOBAL-RF-2",
-    },
-)
-
-
 BOOTSTRAP_COMPARISON_FEATURES = {"global": (0, 1, 2, 4, 26), "pub": (0, 1, 2)}
 BOOTSTRAP_ATTRIBUTE_FEATURES = {"global": (0, 1, 2, 4), "pub": (0, 1, 2)}
 
@@ -186,27 +174,15 @@ def get_bootstrap_comparison_pairs(experiment, kind):
     return [(f"{experiment.upper()}-{a}", f"{experiment.upper()}-{b}") for a, b in pairs]
 
 
-def format_bootstrap_model_label(experiment: str, encoded_features, random_features: bool = False) -> str:
+def format_bootstrap_model_label(experiment: str, encoded_features) -> str:
     experiment_name = experiment.upper()
-    if random_features:
-        if encoded_features is None:
-            return f"{experiment_name}-RF-A"
-        return f"{experiment_name}-RF-{encoded_features}"
-
     if encoded_features is None:
         return f"{experiment_name}-A"
     return f"{experiment_name}-{encoded_features}"
 
 
-def get_bootstrap_random_feature_model_ids() -> tuple[str, ...]:
-    """Return the CLI-selectable random-feature bootstrap model IDs."""
-    return tuple(spec["id"] for spec in BOOTSTRAP_RANDOM_FEATURE_MODELS)
-
-
-def get_bootstrap_plot_models(
-    random_feature_models: tuple[str, ...] = (),
-) -> list[dict[str, object]]:
-    """Return standard models plus explicitly selected random-feature models."""
+def get_bootstrap_plot_models() -> list[dict[str, object]]:
+    """Return configured models for bootstrap plots."""
     specs = []
 
     for experiment, encoded_features_dict in cmodels.items():
@@ -219,24 +195,6 @@ def get_bootstrap_plot_models(
                     "encoded_features": encoded_features,
                     "color": color,
                     "label": format_bootstrap_model_label(experiment, encoded_features),
-                    "random_features": False,
-                }
-            )
-
-    selected_random_feature_models = set(random_feature_models)
-    for spec in BOOTSTRAP_RANDOM_FEATURE_MODELS:
-        if spec["id"] in selected_random_feature_models:
-            specs.append(
-                {
-                    **spec,
-                    "display_experiment": spec["family"],
-                    "label": spec.get("label")
-                    or format_bootstrap_model_label(
-                        spec["family"],
-                        spec["encoded_features"],
-                        random_features=True,
-                    ),
-                    "random_features": True,
                 }
             )
 
